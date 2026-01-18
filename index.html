@@ -403,7 +403,8 @@
     
     body.dread-active.spinning .catch-zone {
       opacity: 1;
-      bottom: 5px;
+      top: 5px;
+      bottom: auto;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -436,6 +437,7 @@
     body.ascended-active.spinning .catch-zone {
       opacity: 1;
       top: 5px;
+      bottom: auto;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -1642,7 +1644,7 @@
       document.querySelectorAll('.press-dot').forEach(p => p.classList.remove('filled'));
 
       // Set target glyph
-      const targetId = mode === 'dread' ? 'mg4' : 'mg1';
+      const targetId = mode === 'dread' ? 'mg1' : 'mg4';
       document.getElementById(targetId).classList.add('target');
 
       updateUI();
@@ -1823,8 +1825,8 @@
         metalSwooshSound = null;
       }
 
-      // Check alignment - target is at 180° for dread (bottom), 0° for ascended (top)
-      const targetAngle = mode === 'dread' ? 180 : 0;
+      // Check alignment - target is at 0° for dread (bottom/6 o'clock), 180° for ascended (top/12 o'clock)
+      const targetAngle = mode === 'dread' ? 0 : 180;
       const tolerance = 25;
       
       let diff = Math.abs(middleRotation - targetAngle);
@@ -1840,7 +1842,7 @@
         middleRotation = targetAngle;
         document.getElementById('middleRing').style.transform = `rotate(${middleRotation}deg)`;
         
-        const targetId = mode === 'dread' ? 'mg4' : 'mg1';
+        const targetId = mode === 'dread' ? 'mg1' : 'mg4';
         document.getElementById(targetId).classList.remove('target');
         document.getElementById(targetId).classList.add('aligned');
 
