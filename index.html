@@ -224,6 +224,199 @@
       }
     }
 
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      
+      header {
+        padding: 5px 0 15px;
+      }
+      
+      h1 {
+        font-size: 1.3rem;
+        letter-spacing: 0.15em;
+      }
+      
+      .subtitle {
+        font-size: 0.75rem;
+      }
+      
+      .mode-selection {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      
+      .mode-btn {
+        padding: 12px;
+        font-size: 1rem;
+      }
+      
+      .mode-btn span {
+        font-size: 0.7rem;
+      }
+      
+      .instruction-panel {
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .phase-label {
+        font-size: 0.65rem;
+      }
+      
+      .instruction-text {
+        font-size: 1rem;
+      }
+      
+      .instruction-hint {
+        font-size: 0.75rem;
+      }
+      
+      .dial-frame {
+        width: 320px;
+        height: 320px;
+        margin-bottom: 10px;
+      }
+      
+      .controls {
+        padding: 12px 15px;
+        gap: 15px;
+      }
+      
+      .control-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1.3rem;
+        /* Make touch targets larger */
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      
+      .control-btn.center-control {
+        width: 65px;
+        height: 65px;
+        font-size: 0.65rem;
+      }
+      
+      .control-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .rotation-counter,
+      .press-counter {
+        gap: 6px;
+        margin-top: 8px;
+      }
+      
+      .rot-indicator,
+      .press-dot {
+        width: 10px;
+        height: 10px;
+      }
+      
+      .message-log {
+        height: 120px;
+        padding: 10px;
+        font-size: 0.75rem;
+      }
+      
+      .log-entry {
+        padding: 4px 0;
+      }
+      
+      .reset-btn {
+        padding: 10px 25px;
+        font-size: 0.75rem;
+      }
+      
+      /* Catch zone adjustments for mobile */
+      .catch-zone {
+        width: 75px;
+        height: 75px;
+      }
+      
+      /* Call overlay mobile */
+      .call-overlay {
+        padding: 20px;
+      }
+      
+      .call-message {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+      
+      .dismiss-btn {
+        padding: 10px 25px;
+        font-size: 0.8rem;
+      }
+      
+      /* Fail overlay mobile */
+      .fail-overlay {
+        padding: 20px;
+      }
+      
+      .fail-title {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+      }
+      
+      .fail-message {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+      
+      .restart-btn {
+        padding: 12px 30px;
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 360px) {
+      .dial-frame {
+        width: 280px;
+        height: 280px;
+      }
+      
+      .control-btn {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .control-btn.center-control {
+        width: 58px;
+        height: 58px;
+        font-size: 0.6rem;
+      }
+      
+      .mode-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+      
+      h1 {
+        font-size: 1.1rem;
+      }
+      
+      .message-log {
+        height: 100px;
+      }
+    }
+    
+    /* Prevent zoom on double tap for iOS */
+    * {
+      touch-action: manipulation;
+    }
+    
+    /* Ensure buttons are touch-friendly */
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     /* Main Dial SVG */
     .dial-svg {
       width: 100%;
