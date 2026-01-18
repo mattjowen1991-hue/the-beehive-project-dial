@@ -7,17 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --void-black: #050507;
+      --void-black: #030305;
       --shadow: #0a0a0f;
       --static: #1a1a22;
       --bone: #c8c4b8;
       --dread-red: #8b0000;
       --dread-glow: #ff2222;
       --blood: #4a0000;
+      --blood-bright: #8a0000;
       --ascended-gold: #c9a227;
       --ascended-glow: #ffd700;
-      --ascended-white: #fffff0;
-      --highlight: #00ff88;
+      --metal-dark: #1a1a1e;
+      --metal-mid: #2a2a30;
+      --metal-light: #3a3a42;
     }
 
     * {
@@ -36,25 +38,24 @@
     }
 
     body.dread-active {
-      background: #030304;
+      background: #020203;
     }
 
     body.ascended-active {
-      background: #08080a;
+      background: #050508;
     }
 
-    body.calling {
-      animation: screen-shake 0.1s infinite;
+    body.shaking {
+      animation: shake 0.15s ease-in-out;
     }
 
-    @keyframes screen-shake {
-      0%, 100% { transform: translate(0); }
-      25% { transform: translate(-2px, 2px); }
-      50% { transform: translate(2px, -2px); }
-      75% { transform: translate(-2px, -2px); }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px) rotate(-0.5deg); }
+      75% { transform: translateX(3px) rotate(0.5deg); }
     }
 
-    /* Noise overlay */
+    /* Noise texture */
     body::before {
       content: '';
       position: fixed;
@@ -62,33 +63,33 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.04;
       pointer-events: none;
       z-index: 1000;
     }
 
     /* Layout */
     .container {
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 15px;
     }
 
     /* Header */
     header {
       text-align: center;
-      padding: 15px 0 25px;
+      padding: 10px 0 20px;
     }
 
     h1 {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
       font-weight: 400;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      margin-bottom: 5px;
-      transition: color 1s ease, text-shadow 1s ease;
+      margin-bottom: 3px;
+      transition: color 0.5s ease, text-shadow 0.5s ease;
     }
 
     body.dread-active h1 {
@@ -104,29 +105,29 @@
     .subtitle {
       font-style: italic;
       color: var(--static);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
-    /* Mode Selection - Big Prominent Buttons */
+    /* Mode Selection */
     .mode-selection {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 25px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .mode-btn {
-      padding: 20px;
+      padding: 15px;
       border: 2px solid var(--static);
       background: var(--shadow);
       color: var(--bone);
       font-family: 'Cinzel', serif;
-      font-size: 1rem;
+      font-size: 0.9rem;
       letter-spacing: 0.1em;
       cursor: pointer;
       transition: all 0.3s ease;
       text-align: center;
-      border-radius: 4px;
+      border-radius: 3px;
     }
 
     .mode-btn:hover {
@@ -138,7 +139,7 @@
       border-color: var(--dread-red);
       background: linear-gradient(180deg, var(--blood) 0%, var(--shadow) 100%);
       color: var(--dread-glow);
-      box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+      box-shadow: 0 0 25px rgba(139, 0, 0, 0.5);
     }
 
     .mode-btn.ascended:hover,
@@ -146,327 +147,272 @@
       border-color: var(--ascended-gold);
       background: linear-gradient(180deg, rgba(201, 162, 39, 0.2) 0%, var(--shadow) 100%);
       color: var(--ascended-glow);
-      box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+      box-shadow: 0 0 25px rgba(201, 162, 39, 0.4);
     }
 
     .mode-btn span {
       display: block;
       font-family: 'Crimson Text', serif;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-style: italic;
-      margin-top: 8px;
+      margin-top: 5px;
       opacity: 0.7;
     }
 
-    /* Current Action Box - THE KEY INSTRUCTION */
-    .current-action {
+    /* Instruction Box */
+    .instruction-box {
       background: linear-gradient(180deg, var(--shadow) 0%, var(--void-black) 100%);
-      border: 2px solid var(--static);
-      border-radius: 4px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border: 1px solid var(--static);
+      border-radius: 3px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
       text-align: center;
     }
 
-    .action-phase {
+    .phase-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--static);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .action-instruction {
-      font-size: 1.2rem;
-      line-height: 1.5;
-      margin-bottom: 15px;
+    .instruction-text {
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
     }
 
-    .action-instruction strong {
-      color: var(--highlight);
+    .instruction-text strong {
+      color: #00ff88;
     }
 
-    body.dread-active .action-instruction strong {
+    body.dread-active .instruction-text strong {
       color: var(--dread-glow);
     }
 
-    body.ascended-active .action-instruction strong {
+    body.ascended-active .instruction-text strong {
       color: var(--ascended-glow);
     }
 
-    .action-hint {
-      font-size: 0.85rem;
+    .instruction-hint {
+      font-size: 0.8rem;
       color: var(--static);
       font-style: italic;
     }
 
-    /* Progress Bar */
-    .progress-section {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 15px;
+    /* The Dial Assembly */
+    .dial-assembly {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .progress-bar {
-      height: 12px;
-      background: var(--void-black);
-      border: 1px solid var(--static);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s ease;
-      border-radius: 6px;
-    }
-
-    body.dread-active .progress-fill {
-      background: linear-gradient(90deg, var(--dread-red), var(--dread-glow));
-    }
-
-    body.ascended-active .progress-fill {
-      background: linear-gradient(90deg, var(--ascended-gold), var(--ascended-glow));
-    }
-
-    .progress-fill.neutral {
-      background: linear-gradient(90deg, var(--static), var(--bone));
-    }
-
-    .progress-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      color: var(--static);
-      min-width: 80px;
-      text-align: right;
-    }
-
-    /* Rotation Counter */
-    .rotation-counter {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
       margin-bottom: 15px;
-      padding: 12px 20px;
-      background: var(--shadow);
-      border: 1px solid var(--static);
-      border-radius: 4px;
     }
 
-    .rotation-counter.visible {
-      display: flex;
-    }
-
-    .rotation-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      color: var(--static);
-    }
-
-    .rotation-dots {
-      display: flex;
-      gap: 10px;
-    }
-
-    .rotation-dot {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--void-black);
-      border: 2px solid var(--static);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      color: var(--static);
-      transition: all 0.3s ease;
-    }
-
-    .rotation-dot.filled {
-      transform: scale(1.15);
-      animation: rotation-pulse 0.5s ease;
-    }
-
-    body.dread-active .rotation-dot.filled {
-      background: var(--dread-red);
-      border-color: var(--dread-glow);
-      color: var(--dread-glow);
-      box-shadow: 0 0 15px var(--dread-red);
-    }
-
-    body.ascended-active .rotation-dot.filled {
-      background: rgba(201, 162, 39, 0.3);
-      border-color: var(--ascended-glow);
-      color: var(--ascended-glow);
-      box-shadow: 0 0 15px var(--ascended-gold);
-    }
-
-    @keyframes rotation-pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1.15); }
-    }
-
-    /* The Dial Container */
-    .dial-container {
+    .dial-frame {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      margin-bottom: 20px;
+      width: 360px;
+      height: 360px;
+      margin-bottom: 15px;
     }
 
-    .dial-wrapper {
-      position: relative;
-      width: 380px;
-      height: 380px;
-    }
-
-    @media (max-width: 500px) {
-      .dial-wrapper {
-        width: 320px;
-        height: 320px;
+    @media (max-width: 400px) {
+      .dial-frame {
+        width: 300px;
+        height: 300px;
       }
     }
 
-    /* The Dial SVG */
+    /* Main Dial SVG */
     .dial-svg {
       width: 100%;
       height: 100%;
-      filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
-      transition: filter 1s ease;
+      filter: drop-shadow(0 5px 20px rgba(0,0,0,0.8));
     }
 
-    body.dread-active .dial-svg {
-      filter: drop-shadow(0 0 30px rgba(139, 0, 0, 0.4));
-    }
-
-    body.ascended-active .dial-svg {
-      filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.3));
-    }
-
-    /* Ring backgrounds */
-    .outer-ring-bg {
-      fill: #0d0d0d;
-      stroke: #1a1a1a;
-      stroke-width: 2;
-      transition: all 0.3s ease;
-    }
-
-    .middle-ring-bg {
-      fill: #111;
-      stroke: #222;
+    /* Ring Textures and Styles */
+    
+    /* Outer Ring - Rough meteoric rock */
+    .outer-ring-base {
+      fill: url(#outerRockTexture);
+      stroke: #0a0a0a;
       stroke-width: 1;
-      transition: all 0.3s ease;
     }
 
-    .inner-ring-bg {
-      fill: #0a0a0a;
-      stroke: #1a1a1a;
-      stroke-width: 1;
-      transition: all 0.3s ease;
-    }
-
-    /* Active ring highlight */
-    .ring-highlight {
+    .outer-ring-edge {
       fill: none;
-      stroke: var(--highlight);
+      stroke: url(#outerEdgeGradient);
       stroke-width: 3;
-      stroke-dasharray: 10 5;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      animation: dash-rotate 2s linear infinite;
     }
 
-    @keyframes dash-rotate {
-      to { stroke-dashoffset: -30; }
-    }
-
-    .ring-highlight.active {
-      opacity: 1;
-    }
-
-    body.dread-active .ring-highlight.active {
-      stroke: var(--dread-glow);
-    }
-
-    body.ascended-active .ring-highlight.active {
-      stroke: var(--ascended-glow);
-    }
-
-    /* Glyphs */
-    .glyph {
-      font-family: 'Cinzel', serif;
-      font-size: 12px;
-      fill: #333;
-      transition: fill 0.3s ease, font-size 0.3s ease;
-    }
-
-    .glyph.lit {
-      fill: var(--bone);
-    }
-
-    .glyph.target {
-      fill: var(--highlight);
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    body.dread-active .glyph.target {
-      fill: var(--dread-glow);
-      filter: drop-shadow(0 0 5px var(--dread-red));
-    }
-
-    body.ascended-active .glyph.target {
-      fill: var(--ascended-glow);
-      filter: drop-shadow(0 0 5px var(--ascended-gold));
-    }
-
-    /* Blood channels */
     .blood-channel {
-      stroke: #1a1a1a;
-      stroke-width: 2;
       fill: none;
-      transition: stroke 0.5s ease;
+      stroke: #1a0a0a;
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke 0.5s ease, filter 0.5s ease;
+    }
+
+    .blood-channel.filling {
+      stroke: var(--blood);
+      animation: blood-flow 0.5s ease forwards;
     }
 
     .blood-channel.filled {
-      stroke: var(--dread-red);
-      filter: drop-shadow(0 0 3px var(--dread-red));
+      stroke: var(--blood-bright);
+      filter: drop-shadow(0 0 4px var(--dread-red));
     }
 
     body.ascended-active .blood-channel.filled {
       stroke: var(--ascended-gold);
+      filter: drop-shadow(0 0 4px var(--ascended-gold));
+    }
+
+    @keyframes blood-flow {
+      0% { stroke-dashoffset: 50; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* Outer ring triangle glyphs */
+    .outer-glyph {
+      fill: none;
+      stroke: #252525;
+      stroke-width: 1.5;
+      transition: stroke 0.3s ease, filter 0.3s ease;
+    }
+
+    .outer-glyph.active {
+      stroke: #444;
+    }
+
+    body.dread-active .outer-glyph.active {
+      stroke: var(--dread-red);
+      filter: drop-shadow(0 0 3px var(--dread-red));
+    }
+
+    body.ascended-active .outer-glyph.active {
+      stroke: var(--ascended-gold);
       filter: drop-shadow(0 0 3px var(--ascended-gold));
     }
 
-    /* Center eye */
-    .center-eye-outer {
-      fill: var(--void-black);
-      stroke: #222;
+    /* Middle Ring - Smooth cold metal */
+    .middle-ring-base {
+      fill: url(#middleMetalGradient);
+      stroke: #1a1a1a;
+      stroke-width: 1;
+    }
+
+    .middle-ring-shine {
+      fill: url(#middleShineGradient);
+      opacity: 0.3;
+    }
+
+    /* Middle ring hexagon/waveform glyphs */
+    .middle-glyph {
+      fill: none;
+      stroke: #2a2a2a;
+      stroke-width: 1;
+      transition: stroke 0.3s ease, filter 0.3s ease;
+    }
+
+    .middle-glyph.target {
+      stroke: #00ff88;
+      stroke-width: 1.5;
+      filter: drop-shadow(0 0 5px #00ff88);
+    }
+
+    body.dread-active .middle-glyph.target {
+      stroke: var(--dread-glow);
+      filter: drop-shadow(0 0 5px var(--dread-red));
+    }
+
+    body.ascended-active .middle-glyph.target {
+      stroke: var(--ascended-glow);
+      filter: drop-shadow(0 0 5px var(--ascended-gold));
+    }
+
+    .middle-glyph.aligned {
+      stroke: #00ff88;
+      filter: drop-shadow(0 0 8px #00ff88);
+      animation: glyph-pulse 0.5s ease;
+    }
+
+    body.dread-active .middle-glyph.aligned {
+      stroke: var(--dread-glow);
+      filter: drop-shadow(0 0 10px var(--dread-red));
+    }
+
+    body.ascended-active .middle-glyph.aligned {
+      stroke: var(--ascended-glow);
+      filter: drop-shadow(0 0 10px var(--ascended-gold));
+    }
+
+    @keyframes glyph-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Inner Ring - Static electricity feel */
+    .inner-ring-base {
+      fill: url(#innerVoidGradient);
+      stroke: #151515;
+      stroke-width: 1;
+    }
+
+    .inner-ring-static {
+      fill: none;
+      stroke: url(#staticGradient);
       stroke-width: 2;
-      cursor: pointer;
+      stroke-dasharray: 2 3;
+      opacity: 0.5;
+      animation: static-buzz 0.1s steps(2) infinite;
+    }
+
+    @keyframes static-buzz {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 5; }
+    }
+
+    /* Inner ring impossible glyphs */
+    .inner-glyph {
+      fill: none;
+      stroke: #1a1a1a;
+      stroke-width: 0.75;
       transition: all 0.3s ease;
     }
 
-    .center-eye-inner {
-      fill: #111;
-      transition: fill 0.5s ease;
-      pointer-events: none;
+    .inner-glyph.impossible {
+      animation: impossible-flicker 2s ease-in-out infinite;
+    }
+
+    @keyframes impossible-flicker {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+
+    body.dread-active .inner-glyph.active {
+      stroke: var(--dread-glow);
+      filter: drop-shadow(0 0 3px var(--dread-red));
+    }
+
+    body.ascended-active .inner-glyph.active {
+      stroke: var(--ascended-glow);
+      filter: drop-shadow(0 0 3px var(--ascended-gold));
+    }
+
+    /* Center Eye */
+    .center-eye-outer {
+      fill: var(--void-black);
+      stroke: #1a1a1a;
+      stroke-width: 2;
+      transition: all 0.3s ease;
     }
 
     .center-eye-outer.clickable {
-      stroke: var(--highlight);
-      animation: pulse-ring 1s ease-in-out infinite;
+      cursor: pointer;
+      stroke: #00ff88;
+      animation: eye-beckon 1s ease-in-out infinite;
     }
 
     body.dread-active .center-eye-outer.clickable {
@@ -477,161 +423,205 @@
       stroke: var(--ascended-glow);
     }
 
-    @keyframes pulse-ring {
+    @keyframes eye-beckon {
       0%, 100% { stroke-width: 2; }
       50% { stroke-width: 4; }
     }
 
+    .center-eye-inner {
+      fill: #080808;
+      transition: fill 0.5s ease, filter 0.5s ease;
+    }
+
+    .center-eye-inner.active {
+      animation: eye-glow 1s ease-in-out infinite;
+    }
+
     body.dread-active .center-eye-inner.active {
       fill: var(--dread-red);
+      filter: drop-shadow(0 0 10px var(--dread-red));
     }
 
     body.ascended-active .center-eye-inner.active {
       fill: var(--ascended-gold);
+      filter: drop-shadow(0 0 10px var(--ascended-gold));
     }
 
-    /* Alignment marker */
+    @keyframes eye-glow {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    /* Alignment Marker */
     .alignment-marker {
-      fill: var(--highlight);
+      fill: #333;
       transition: fill 0.3s ease;
     }
 
     body.dread-active .alignment-marker {
-      fill: var(--dread-glow);
+      fill: var(--dread-red);
     }
 
     body.ascended-active .alignment-marker {
       fill: var(--ascended-gold);
     }
 
-    /* Target marker for middle ring */
-    .target-marker {
-      fill: none;
-      stroke: var(--highlight);
-      stroke-width: 2;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .target-marker.visible {
-      opacity: 1;
-      animation: target-pulse 1s ease-in-out infinite;
-    }
-
-    @keyframes target-pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-
-    body.dread-active .target-marker {
-      stroke: var(--dread-glow);
-    }
-
-    body.ascended-active .target-marker {
-      stroke: var(--ascended-glow);
-    }
-
-    /* Interactive overlays */
-    .ring-control {
-      position: absolute;
-      border-radius: 50%;
-      cursor: grab;
-      opacity: 0;
-      transition: opacity 0.3s ease, background 0.3s ease;
-    }
-
-    .ring-control:active {
-      cursor: grabbing;
-    }
-
-    .ring-control.active-ring {
-      opacity: 1;
-      background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
-    }
-
-    body.dread-active .ring-control.active-ring {
-      background: radial-gradient(circle, rgba(255, 34, 34, 0.1) 0%, transparent 70%);
-    }
-
-    body.ascended-active .ring-control.active-ring {
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-    }
-
-    .ring-control.outer {
-      width: 380px;
-      height: 380px;
-      top: 0;
-      left: 0;
-    }
-
-    .ring-control.middle {
-      width: 280px;
-      height: 280px;
-      top: 50px;
-      left: 50px;
-    }
-
-    .ring-control.inner {
-      width: 120px;
-      height: 120px;
-      top: 130px;
-      left: 130px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 500px) {
-      .ring-control.outer {
-        width: 320px;
-        height: 320px;
-      }
-      .ring-control.middle {
-        width: 236px;
-        height: 236px;
-        top: 42px;
-        left: 42px;
-      }
-      .ring-control.inner {
-        width: 100px;
-        height: 100px;
-        top: 110px;
-        left: 110px;
-      }
-    }
-
-    /* Press counter display */
-    .press-counter {
-      position: absolute;
-      bottom: -35px;
-      left: 50%;
-      transform: translateX(-50%);
+    /* Control Panel */
+    .control-panel {
       display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      background: var(--shadow);
+      border: 1px solid var(--static);
+      border-radius: 3px;
+    }
+
+    .control-btn {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--static);
+      background: var(--void-black);
+      color: var(--bone);
+      font-size: 1.5rem;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover:not(:disabled) {
+      background: var(--shadow);
+      border-color: var(--bone);
+      transform: scale(1.05);
+    }
+
+    .control-btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .control-btn.active {
+      border-color: #00ff88;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+
+    body.dread-active .control-btn.active {
+      border-color: var(--dread-glow);
+      box-shadow: 0 0 15px rgba(255, 34, 34, 0.4);
+    }
+
+    body.ascended-active .control-btn.active {
+      border-color: var(--ascended-glow);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .control-btn.center-control {
+      width: 70px;
+      height: 70px;
+      font-size: 0.7rem;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.05em;
+    }
+
+    .control-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Rotation Counter */
+    .rotation-counter {
+      display: none;
+      justify-content: center;
       gap: 8px;
+      margin-top: 10px;
+    }
+
+    .rotation-counter.visible {
+      display: flex;
+    }
+
+    .rot-indicator {
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--static);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: var(--static);
+      background: var(--void-black);
+      transition: all 0.3s ease;
+    }
+
+    .rot-indicator.filled {
+      animation: rot-fill 0.3s ease forwards;
+    }
+
+    body.dread-active .rot-indicator.filled {
+      border-color: var(--dread-glow);
+      color: var(--dread-glow);
+      background: var(--blood);
+      box-shadow: 0 0 10px var(--dread-red);
+    }
+
+    body.ascended-active .rot-indicator.filled {
+      border-color: var(--ascended-glow);
+      color: var(--ascended-glow);
+      background: rgba(201, 162, 39, 0.2);
+      box-shadow: 0 0 10px var(--ascended-gold);
+    }
+
+    @keyframes rot-fill {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* Press Counter */
+    .press-counter {
+      display: none;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .press-counter.visible {
+      display: flex;
     }
 
     .press-dot {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--static);
       border-radius: 50%;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: var(--void-black);
       transition: all 0.2s ease;
     }
 
     .press-dot.filled {
-      background: var(--highlight);
-      border-color: var(--highlight);
       transform: scale(1.2);
     }
 
     body.dread-active .press-dot.filled {
       background: var(--dread-glow);
-      border-color: var(--dread-red);
+      border-color: var(--dread-glow);
       box-shadow: 0 0 8px var(--dread-red);
     }
 
     body.ascended-active .press-dot.filled {
       background: var(--ascended-glow);
-      border-color: var(--ascended-gold);
+      border-color: var(--ascended-glow);
       box-shadow: 0 0 8px var(--ascended-gold);
     }
 
@@ -639,38 +629,36 @@
     .message-log {
       background: var(--shadow);
       border: 1px solid var(--static);
-      border-radius: 4px;
-      padding: 15px;
-      max-height: 200px;
+      border-radius: 3px;
+      padding: 12px;
+      max-height: 150px;
       overflow-y: auto;
+      margin-bottom: 10px;
     }
 
     .log-title {
       font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--static);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .log-entry {
-      padding: 8px 0;
+      padding: 6px 0;
       border-bottom: 1px solid rgba(255,255,255,0.03);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       line-height: 1.4;
-      animation: fade-in 0.3s ease;
+      animation: log-in 0.3s ease;
     }
 
-    @keyframes fade-in {
+    @keyframes log-in {
       from { opacity: 0; transform: translateY(-5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .log-entry:last-child {
-      border-bottom: none;
-    }
-
+    .log-entry:last-child { border-bottom: none; }
     .log-entry.system { color: var(--static); font-style: italic; }
     .log-entry.dread { color: var(--dread-glow); }
     .log-entry.ascended { color: var(--ascended-glow); }
@@ -678,7 +666,29 @@
     .log-entry.danger { color: var(--dread-glow); text-shadow: 0 0 10px var(--dread-red); }
     .log-entry.holy { color: var(--ascended-glow); text-shadow: 0 0 10px var(--ascended-gold); }
 
-    /* The Call overlay */
+    /* Reset Button */
+    .reset-btn {
+      display: block;
+      width: 150px;
+      margin: 10px auto 0;
+      padding: 10px;
+      border: 1px solid var(--static);
+      background: transparent;
+      color: var(--bone);
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    .reset-btn:hover {
+      background: var(--shadow);
+      border-color: var(--bone);
+    }
+
+    /* Call Overlay */
     .call-overlay {
       position: fixed;
       top: 0;
@@ -701,26 +711,26 @@
     }
 
     .call-overlay.dread {
-      background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.99) 100%);
+      background: radial-gradient(ellipse at center, rgba(80, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.99) 100%);
     }
 
     .call-overlay.ascended {
-      background: radial-gradient(ellipse at center, rgba(255, 250, 230, 0.95) 0%, rgba(255, 215, 0, 0.3) 100%);
+      background: radial-gradient(ellipse at center, rgba(255, 250, 230, 0.95) 0%, rgba(255, 215, 0, 0.2) 100%);
     }
 
     .call-message {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.2rem, 4vw, 2rem);
+      font-size: clamp(1rem, 3.5vw, 1.6rem);
       text-align: center;
-      padding: 40px;
-      max-width: 700px;
+      padding: 30px;
+      max-width: 650px;
       line-height: 1.8;
     }
 
     .call-overlay.dread .call-message {
       color: var(--dread-glow);
       text-shadow: 0 0 30px var(--dread-red);
-      animation: dread-text 0.3s ease-in-out infinite;
+      animation: dread-speak 0.2s ease-in-out infinite;
     }
 
     .call-overlay.ascended .call-message {
@@ -728,113 +738,51 @@
       text-shadow: 0 0 20px var(--ascended-glow);
     }
 
-    @keyframes dread-text {
-      0%, 100% { transform: scale(1) rotate(0deg); }
-      25% { transform: scale(1.01) rotate(-0.5deg); }
-      75% { transform: scale(0.99) rotate(0.5deg); }
+    @keyframes dread-speak {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.01) rotate(0.3deg); }
     }
 
-    .dismiss-call {
-      margin-top: 30px;
-      padding: 15px 40px;
+    .dismiss-btn {
+      margin-top: 25px;
+      padding: 12px 35px;
       border: 2px solid currentColor;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.4);
       color: inherit;
       font-family: 'Cinzel', serif;
-      font-size: 1rem;
+      font-size: 0.9rem;
       letter-spacing: 0.1em;
       cursor: pointer;
+      border-radius: 3px;
       transition: all 0.3s ease;
-      border-radius: 4px;
     }
 
-    .dismiss-call:hover {
-      background: rgba(255,255,255,0.2);
+    .dismiss-btn:hover {
+      background: rgba(255,255,255,0.1);
       transform: scale(1.05);
     }
 
-    /* Reset button */
-    .reset-btn {
-      display: block;
-      width: 100%;
-      max-width: 200px;
-      margin: 20px auto 0;
-      padding: 12px 20px;
-      border: 1px solid var(--static);
-      background: transparent;
-      color: var(--bone);
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-radius: 4px;
+    /* Scrollbar */
+    .message-log::-webkit-scrollbar { width: 4px; }
+    .message-log::-webkit-scrollbar-track { background: var(--void-black); }
+    .message-log::-webkit-scrollbar-thumb { background: var(--static); border-radius: 2px; }
+
+    /* Middle ring spinning animation */
+    .middle-ring-spinning {
+      animation: spin-ring 0.5s linear infinite;
     }
 
-    .reset-btn:hover {
-      background: var(--shadow);
-      border-color: var(--bone);
-    }
-
-    /* Direction indicator */
-    .direction-hint {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .direction-hint.visible {
-      opacity: 1;
-    }
-
-    .direction-hint svg {
-      width: 60px;
-      height: 60px;
-      animation: rotate-hint 3s linear infinite;
-    }
-
-    .direction-hint.clockwise svg {
-      animation-direction: normal;
-    }
-
-    .direction-hint.counter-clockwise svg {
-      animation-direction: reverse;
-    }
-
-    @keyframes rotate-hint {
+    @keyframes spin-ring {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-
-    .direction-hint svg path {
-      fill: none;
-      stroke: var(--highlight);
-      stroke-width: 3;
-      stroke-linecap: round;
-    }
-
-    body.dread-active .direction-hint svg path {
-      stroke: var(--dread-glow);
-    }
-
-    body.ascended-active .direction-hint svg path {
-      stroke: var(--ascended-glow);
-    }
-
-    /* Scrollbar */
-    .message-log::-webkit-scrollbar { width: 5px; }
-    .message-log::-webkit-scrollbar-track { background: var(--void-black); }
-    .message-log::-webkit-scrollbar-thumb { background: var(--static); border-radius: 3px; }
   </style>
 </head>
 <body>
+  <!-- Call Overlay -->
   <div class="call-overlay" id="callOverlay">
     <div class="call-message" id="callMessage"></div>
-    <button class="dismiss-call" onclick="dismissCall()">⛧ Sever Connection ⛧</button>
+    <button class="dismiss-btn" onclick="dismissCall()">⛧ Sever Connection ⛧</button>
   </div>
 
   <div class="container">
@@ -847,164 +795,277 @@
     <div class="mode-selection">
       <button class="mode-btn dread" onclick="setMode('dread')">
         ⛧ Call The Dread
-        <span>Chaos • Blood • Destruction</span>
+        <span>Widdershins • Blood • Chaos</span>
       </button>
       <button class="mode-btn ascended" onclick="setMode('ascended')">
         ✦ Call The Others
-        <span>Order • Light • Transcendence</span>
+        <span>Deosil • Light • Order</span>
       </button>
     </div>
 
-    <!-- Current Action - THE MAIN INSTRUCTION -->
-    <div class="current-action">
-      <div class="action-phase" id="actionPhase">— Awaiting Activation —</div>
-      <div class="action-instruction" id="actionInstruction">
-        Choose a ritual above to begin the summoning.
-      </div>
-      <div class="action-hint" id="actionHint">
-        Select your path wisely. There is always a cost.
-      </div>
+    <!-- Instruction Box -->
+    <div class="instruction-box">
+      <div class="phase-label" id="phaseLabel">— Awaiting Activation —</div>
+      <div class="instruction-text" id="instructionText">Choose a ritual to begin the summoning.</div>
+      <div class="instruction-hint" id="instructionHint">The dial hungers. The dial waits.</div>
     </div>
 
-    <!-- Progress -->
-    <div class="progress-section">
-      <div class="progress-bar">
-        <div class="progress-fill neutral" id="progressFill"></div>
-      </div>
-      <div class="progress-label" id="progressLabel">0%</div>
-    </div>
-
-    <!-- Rotation Counter (visible during Phase 1) -->
-    <div class="rotation-counter" id="rotationCounter">
-      <span class="rotation-label">Rotations:</span>
-      <div class="rotation-dots">
-        <div class="rotation-dot" id="rot1">I</div>
-        <div class="rotation-dot" id="rot2">II</div>
-        <div class="rotation-dot" id="rot3">III</div>
-      </div>
-    </div>
-
-    <!-- The Dial -->
-    <div class="dial-container">
-      <div class="dial-wrapper">
-        <svg class="dial-svg" viewBox="0 0 380 380" id="dialSvg">
+    <!-- The Dial Assembly -->
+    <div class="dial-assembly">
+      <div class="dial-frame">
+        <svg class="dial-svg" viewBox="0 0 360 360" id="dialSvg">
           <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <!-- Outer Ring Rock Texture -->
+            <pattern id="outerRockTexture" patternUnits="userSpaceOnUse" width="20" height="20">
+              <rect width="20" height="20" fill="#0d0d0f"/>
+              <circle cx="3" cy="5" r="1.5" fill="#151518"/>
+              <circle cx="12" cy="3" r="2" fill="#0a0a0c"/>
+              <circle cx="8" cy="12" r="1" fill="#121215"/>
+              <circle cx="17" cy="9" r="1.5" fill="#0e0e10"/>
+              <circle cx="5" cy="17" r="2" fill="#0b0b0d"/>
+              <circle cx="15" cy="16" r="1" fill="#141417"/>
+              <rect x="1" y="8" width="3" height="1" fill="#080809" transform="rotate(20 2.5 8.5)"/>
+              <rect x="10" y="15" width="4" height="1" fill="#0a0a0b" transform="rotate(-15 12 15.5)"/>
+            </pattern>
+
+            <!-- Outer Ring Edge Gradient -->
+            <linearGradient id="outerEdgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1a1a1c"/>
+              <stop offset="50%" stop-color="#252528"/>
+              <stop offset="100%" stop-color="#0f0f10"/>
+            </linearGradient>
+
+            <!-- Middle Ring Metal Gradient -->
+            <linearGradient id="middleMetalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e1e22"/>
+              <stop offset="30%" stop-color="#28282e"/>
+              <stop offset="50%" stop-color="#2a2a30"/>
+              <stop offset="70%" stop-color="#252529"/>
+              <stop offset="100%" stop-color="#1a1a1e"/>
+            </linearGradient>
+
+            <!-- Middle Ring Shine -->
+            <linearGradient id="middleShineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="transparent"/>
+              <stop offset="45%" stop-color="transparent"/>
+              <stop offset="50%" stop-color="rgba(255,255,255,0.1)"/>
+              <stop offset="55%" stop-color="transparent"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </linearGradient>
+
+            <!-- Inner Ring Void Gradient -->
+            <radialGradient id="innerVoidGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#0a0a0c"/>
+              <stop offset="70%" stop-color="#080809"/>
+              <stop offset="100%" stop-color="#050506"/>
+            </radialGradient>
+
+            <!-- Static Gradient for Inner Ring -->
+            <linearGradient id="staticGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#2a2a30"/>
+              <stop offset="25%" stop-color="#1a1a20"/>
+              <stop offset="50%" stop-color="#3a3a42"/>
+              <stop offset="75%" stop-color="#1a1a20"/>
+              <stop offset="100%" stop-color="#2a2a30"/>
+            </linearGradient>
+
+            <!-- Glow filters -->
+            <filter id="glowRed">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feFlood flood-color="#ff2222" flood-opacity="0.5"/>
+              <feComposite in2="blur" operator="in"/>
               <feMerge>
-                <feMergeNode in="coloredBlur"/>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <filter id="glowGold">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feFlood flood-color="#ffd700" flood-opacity="0.5"/>
+              <feComposite in2="blur" operator="in"/>
+              <feMerge>
+                <feMergeNode/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
           </defs>
 
-          <!-- Outer Ring -->
+          <!-- OUTER RING (Matter Ring) -->
           <g id="outerRing">
-            <circle class="outer-ring-bg" cx="190" cy="190" r="175" stroke-width="40"/>
-            <circle class="ring-highlight" id="outerHighlight" cx="190" cy="190" r="175" stroke-width="42"/>
+            <!-- Main ring body - rough rock texture -->
+            <circle class="outer-ring-base" cx="180" cy="180" r="165" stroke-width="45"/>
             
-            <!-- Blood/Light channels -->
-            <g class="channels">
-              <path class="blood-channel" id="channel1" d="M 190 25 Q 200 40 190 55"/>
-              <path class="blood-channel" id="channel2" d="M 310 70 Q 295 85 285 100"/>
-              <path class="blood-channel" id="channel3" d="M 355 190 Q 340 195 325 190"/>
-              <path class="blood-channel" id="channel4" d="M 310 310 Q 295 295 285 280"/>
-              <path class="blood-channel" id="channel5" d="M 190 355 Q 180 340 190 325"/>
-              <path class="blood-channel" id="channel6" d="M 70 310 Q 85 295 95 280"/>
-              <path class="blood-channel" id="channel7" d="M 25 190 Q 40 185 55 190"/>
-              <path class="blood-channel" id="channel8" d="M 70 70 Q 85 85 95 100"/>
+            <!-- Rough edge details -->
+            <circle cx="180" cy="180" r="143" fill="none" stroke="#0a0a0b" stroke-width="1"/>
+            <circle cx="180" cy="180" r="187" fill="none" stroke="#151517" stroke-width="1"/>
+
+            <!-- Blood Channels - deep scratches -->
+            <g id="bloodChannels">
+              <path class="blood-channel" id="bc1" d="M 180 20 Q 185 35 180 50" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc2" d="M 290 55 Q 275 70 265 85" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc3" d="M 335 165 Q 320 170 310 180" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc4" d="M 320 280 Q 305 270 290 260" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc5" d="M 200 335 Q 190 320 180 310" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc6" d="M 70 295 Q 85 280 95 265" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc7" d="M 25 195 Q 40 185 55 180" stroke-dasharray="50"/>
+              <path class="blood-channel" id="bc8" d="M 55 70 Q 70 85 85 95" stroke-dasharray="50"/>
             </g>
 
-            <!-- Outer glyphs -->
-            <text class="glyph" id="glyph-A" x="190" y="35" text-anchor="middle">A</text>
-            <text class="glyph" id="glyph-B" x="295" y="85" text-anchor="middle">B</text>
-            <text class="glyph" id="glyph-F" x="345" y="195" text-anchor="middle">F</text>
-            <text class="glyph" id="glyph-G" x="295" y="305" text-anchor="middle">G</text>
-            <text class="glyph" id="glyph-H" x="190" y="355" text-anchor="middle">H</text>
-            <text class="glyph" id="glyph-I" x="85" y="305" text-anchor="middle">I</text>
-            <text class="glyph" id="glyph-J" x="35" y="195" text-anchor="middle">J</text>
-            <text class="glyph" id="glyph-K" x="85" y="85" text-anchor="middle">K</text>
-            <text class="glyph" id="glyph-L" x="145" y="45" text-anchor="middle">L</text>
+            <!-- Triangle Series Glyphs (9 jagged triangular shapes) -->
+            <g id="outerGlyphs">
+              <!-- Solid state triangles -->
+              <path class="outer-glyph" id="og1" d="M 180 28 L 172 42 L 188 42 Z M 176 38 L 180 32 L 184 38"/>
+              <path class="outer-glyph" id="og2" d="M 255 50 L 248 65 L 268 60 Z M 254 58 L 258 52 L 262 60"/>
+              <path class="outer-glyph" id="og3" d="M 315 110 L 305 125 L 325 122 Z M 312 118 L 318 112 L 320 120"/>
+              <!-- Liquid state triangles -->
+              <path class="outer-glyph" id="og4" d="M 332 180 L 318 175 L 320 195 Z M 324 182 L 328 178 L 326 190"/>
+              <path class="outer-glyph" id="og5" d="M 305 260 L 292 252 L 298 272 Z M 298 260 L 302 256 L 300 268"/>
+              <path class="outer-glyph" id="og6" d="M 230 320 L 218 315 L 225 332 Z M 224 322 L 228 318 L 226 330"/>
+              <!-- Gas state triangles -->
+              <path class="outer-glyph" id="og7" d="M 130 320 L 122 305 L 142 310 Z M 130 312 L 134 308 L 136 316"/>
+              <path class="outer-glyph" id="og8" d="M 55 250 L 50 235 L 70 240 Z M 56 244 L 60 238 L 64 246"/>
+              <path class="outer-glyph" id="og9" d="M 35 165 L 32 150 L 52 155 Z M 38 158 L 42 152 L 48 160"/>
+            </g>
           </g>
 
-          <!-- Middle Ring -->
+          <!-- MIDDLE RING (Frequency Ring) -->
           <g id="middleRing">
-            <circle class="middle-ring-bg" cx="190" cy="190" r="125" stroke-width="35"/>
-            <circle class="ring-highlight" id="middleHighlight" cx="190" cy="190" r="125" stroke-width="37"/>
+            <!-- Smooth metal base -->
+            <circle class="middle-ring-base" cx="180" cy="180" r="115" stroke-width="35"/>
             
-            <!-- Middle glyphs -->
-            <text class="glyph" id="glyph-C" x="190" y="78" text-anchor="middle">C</text>
-            <text class="glyph" id="glyph-E" x="270" y="120" text-anchor="middle">E</text>
-            <text class="glyph" id="glyph-M" x="302" y="195" text-anchor="middle">M</text>
-            <text class="glyph" id="glyph-N" x="270" y="270" text-anchor="middle">N</text>
-            <text class="glyph" id="glyph-O" x="190" y="310" text-anchor="middle">O</text>
-            <text class="glyph" id="glyph-P" x="110" y="270" text-anchor="middle">P</text>
-            <text class="glyph" id="glyph-Q" x="78" y="195" text-anchor="middle">Q</text>
-            <text class="glyph" id="glyph-R" x="110" y="120" text-anchor="middle">R</text>
-            <text class="glyph" id="glyph-S" x="150" y="78" text-anchor="middle">S</text>
+            <!-- Metallic shine overlay -->
+            <circle class="middle-ring-shine" cx="180" cy="180" r="115" stroke-width="35" fill="none" stroke="url(#middleShineGradient)"/>
+
+            <!-- Hexagon/Waveform Glyphs (6 circuit-like patterns) -->
+            <g id="middleGlyphs">
+              <!-- Waveform glyph 1 (top) - target for Others -->
+              <g class="middle-glyph" id="mg1" data-position="0">
+                <path d="M 175 72 L 180 65 L 185 72 L 180 68 Z"/>
+                <path d="M 170 75 Q 175 70 180 75 Q 185 70 190 75"/>
+                <line x1="175" y1="78" x2="185" y2="78"/>
+              </g>
+              <!-- Waveform glyph 2 -->
+              <g class="middle-glyph" id="mg2" data-position="60">
+                <path d="M 262 115 L 268 118 L 265 125 L 260 120 Z"/>
+                <path d="M 255 112 Q 262 115 258 122 Q 265 120 262 128"/>
+                <line x1="258" y1="128" x2="268" y2="122"/>
+              </g>
+              <!-- Waveform glyph 3 -->
+              <g class="middle-glyph" id="mg3" data-position="120">
+                <path d="M 265 240 L 270 248 L 262 252 L 268 245 Z"/>
+                <path d="M 260 238 Q 268 242 262 250 Q 270 248 265 256"/>
+                <line x1="260" y1="252" x2="270" y2="248"/>
+              </g>
+              <!-- Waveform glyph 4 (bottom) - target for Dread -->
+              <g class="middle-glyph" id="mg4" data-position="180">
+                <path d="M 175 288 L 180 295 L 185 288 L 180 292 Z"/>
+                <path d="M 170 285 Q 175 290 180 285 Q 185 290 190 285"/>
+                <line x1="175" y1="282" x2="185" y2="282"/>
+              </g>
+              <!-- Waveform glyph 5 -->
+              <g class="middle-glyph" id="mg5" data-position="240">
+                <path d="M 95 240 L 90 248 L 98 252 L 92 245 Z"/>
+                <path d="M 100 238 Q 92 242 98 250 Q 90 248 95 256"/>
+                <line x1="90" y1="248" x2="100" y2="252"/>
+              </g>
+              <!-- Waveform glyph 6 -->
+              <g class="middle-glyph" id="mg6" data-position="300">
+                <path d="M 98 115 L 92 118 L 95 125 L 100 120 Z"/>
+                <path d="M 105 112 Q 98 115 102 122 Q 95 120 98 128"/>
+                <line x1="92" y1="122" x2="102" y2="128"/>
+              </g>
+            </g>
           </g>
 
-          <!-- Inner Ring -->
+          <!-- INNER RING (Void Ring) -->
           <g id="innerRing">
-            <circle class="inner-ring-bg" cx="190" cy="190" r="70" stroke-width="30"/>
-            <circle class="ring-highlight" id="innerHighlight" cx="190" cy="190" r="70" stroke-width="32"/>
+            <!-- Void base -->
+            <circle class="inner-ring-base" cx="180" cy="180" r="65" stroke-width="28"/>
             
-            <!-- Inner glyphs -->
-            <text class="glyph" x="190" y="132" text-anchor="middle" font-size="10">D</text>
-            <text class="glyph" x="230" y="155" text-anchor="middle" font-size="10">T</text>
-            <text class="glyph" x="248" y="195" text-anchor="middle" font-size="10">U</text>
-            <text class="glyph" x="230" y="235" text-anchor="middle" font-size="10">V</text>
-            <text class="glyph" x="190" y="255" text-anchor="middle" font-size="10">W</text>
-            <text class="glyph" x="150" y="235" text-anchor="middle" font-size="10">X</text>
-            <text class="glyph" x="132" y="195" text-anchor="middle" font-size="10">Y</text>
-            <text class="glyph" x="150" y="155" text-anchor="middle" font-size="10">Z</text>
-            <text class="glyph" x="170" y="132" text-anchor="middle" font-size="10">Ω</text>
+            <!-- Static electricity effect -->
+            <circle class="inner-ring-static" cx="180" cy="180" r="65" stroke-width="28"/>
+
+            <!-- Nonagon Impossible Glyphs (9 reality-bending shapes) -->
+            <g id="innerGlyphs">
+              <g class="inner-glyph impossible" id="ig1">
+                <path d="M 180 122 L 177 128 L 183 128 Z M 178 126 L 180 123 L 182 126 M 179 125 L 181 127"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig2">
+                <path d="M 212 132 L 215 138 L 208 136 Z M 210 134 L 214 136 M 211 137 L 213 134"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig3">
+                <path d="M 232 162 L 228 168 L 235 166 Z M 230 164 L 234 165 M 231 167 L 233 163"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig4">
+                <path d="M 232 198 L 228 192 L 235 194 Z M 230 196 L 234 195 M 231 193 L 233 197"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig5">
+                <path d="M 212 228 L 208 224 L 215 222 Z M 210 226 L 214 224 M 211 223 L 213 226"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig6">
+                <path d="M 180 238 L 183 232 L 177 232 Z M 182 234 L 180 237 L 178 234 M 181 235 L 179 233"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig7">
+                <path d="M 148 228 L 145 222 L 152 224 Z M 150 226 L 146 224 M 149 223 L 147 226"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig8">
+                <path d="M 128 198 L 132 192 L 125 194 Z M 130 196 L 126 195 M 129 193 L 127 197"/>
+              </g>
+              <g class="inner-glyph impossible" id="ig9">
+                <path d="M 128 162 L 132 168 L 125 166 Z M 130 164 L 126 165 M 129 167 L 127 163"/>
+              </g>
+            </g>
           </g>
 
-          <!-- Target marker for phase 2 -->
-          <circle class="target-marker" id="targetMarker" cx="190" cy="15" r="15"/>
+          <!-- CENTER EYE -->
+          <circle class="center-eye-outer" id="centerEye" cx="180" cy="180" r="32"/>
+          <circle class="center-eye-inner" id="centerEyeInner" cx="180" cy="180" r="14"/>
 
-          <!-- Alignment marker at top -->
-          <polygon class="alignment-marker" points="190,5 185,18 195,18"/>
-
-          <!-- Center Eye (clickable in phase 3) -->
-          <circle class="center-eye-outer" id="centerEye" cx="190" cy="190" r="35"/>
-          <circle class="center-eye-inner" id="centerEyeInner" cx="190" cy="190" r="15"/>
+          <!-- ALIGNMENT MARKER (bottom) -->
+          <polygon class="alignment-marker" id="alignMarker" points="180,355 175,342 185,342"/>
         </svg>
+      </div>
 
-        <!-- Direction hint overlay -->
-        <div class="direction-hint" id="directionHint">
-          <svg viewBox="0 0 60 60">
-            <path d="M 30 5 A 25 25 0 1 1 29 5" />
-            <path d="M 25 10 L 30 3 L 35 10" />
-          </svg>
-        </div>
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <button class="control-btn" id="btnLeft" onclick="rotateOuter('left')" disabled>
+          <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button class="control-btn center-control" id="btnCenter" onclick="centerAction()" disabled>
+          SPIN
+        </button>
+        <button class="control-btn" id="btnRight" onclick="rotateOuter('right')" disabled>
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
 
-        <!-- Interactive ring controls -->
-        <div class="ring-control outer" id="outerControl"></div>
-        <div class="ring-control middle" id="middleControl"></div>
-        <div class="ring-control inner" id="innerControl"></div>
+      <!-- Rotation Counter -->
+      <div class="rotation-counter" id="rotationCounter">
+        <div class="rot-indicator" id="rot1">I</div>
+        <div class="rot-indicator" id="rot2">II</div>
+        <div class="rot-indicator" id="rot3">III</div>
+      </div>
 
-        <!-- Press counter -->
-        <div class="press-counter" id="pressCounter">
-          <div class="press-dot" id="press1"></div>
-          <div class="press-dot" id="press2"></div>
-          <div class="press-dot" id="press3"></div>
-          <div class="press-dot" id="press4"></div>
-          <div class="press-dot" id="press5"></div>
-          <div class="press-dot" id="press6"></div>
-          <div class="press-dot" id="press7"></div>
-          <div class="press-dot" id="press8"></div>
-          <div class="press-dot" id="press9"></div>
-        </div>
+      <!-- Press Counter -->
+      <div class="press-counter" id="pressCounter">
+        <div class="press-dot" id="p1"></div>
+        <div class="press-dot" id="p2"></div>
+        <div class="press-dot" id="p3"></div>
+        <div class="press-dot" id="p4"></div>
+        <div class="press-dot" id="p5"></div>
+        <div class="press-dot" id="p6"></div>
+        <div class="press-dot" id="p7"></div>
+        <div class="press-dot" id="p8"></div>
+        <div class="press-dot" id="p9"></div>
       </div>
     </div>
 
     <!-- Message Log -->
-    <div class="message-log" id="messageLog">
+    <div class="message-log">
       <div class="log-title">Manifestation Chronicle</div>
       <div id="logEntries">
-        <div class="log-entry system">The dial lies dormant beneath centuries of silence...</div>
+        <div class="log-entry system">The dial rests in darkness, its surface cold as the void between stars...</div>
       </div>
     </div>
 
@@ -1012,19 +1073,18 @@
   </div>
 
   <script>
-    // State
-    let mode = null;
-    let phase = 0;
+    // ============== STATE ==============
+    let mode = null; // 'dread' or 'ascended'
+    let phase = 0; // 0: inactive, 1: outer ring, 2: middle ring spinning, 3: inner ring, 4: complete
     let outerRotation = 0;
     let middleRotation = 0;
+    let rotationCount = 0;
     let pressCount = 0;
-    let progress = 0;
-    let channelsFilled = 0;
-    let isLocked = false;
-    let rotationCount = 0; // Track completed rotations
-    let lastRotationMilestone = 0; // Track when we last played a sound
+    let middleSpinning = false;
+    let middleSpinInterval = null;
+    let middleSpinSpeed = 0;
 
-    // Audio
+    // ============== AUDIO ==============
     let audioCtx = null;
 
     function initAudio() {
@@ -1033,500 +1093,535 @@
       }
     }
 
-    function playSound(type) {
+    function playGrind() {
       initAudio();
-      
-      if (type === 'bone-crack') {
-        // Layered bone cracking sound - multiple oscillators for texture
-        const t = audioCtx.currentTime;
-        
-        // Low crunch
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(80, t);
-        osc1.frequency.exponentialRampToValueAtTime(20, t + 0.08);
-        gain1.gain.setValueAtTime(0.4, t);
-        gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(t);
-        osc1.stop(t + 0.1);
-        
-        // Mid crack
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'square';
-        osc2.frequency.setValueAtTime(150, t + 0.02);
-        osc2.frequency.exponentialRampToValueAtTime(40, t + 0.1);
-        gain2.gain.setValueAtTime(0.3, t + 0.02);
-        gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(t + 0.02);
-        osc2.stop(t + 0.12);
-        
-        // High snap
-        const osc3 = audioCtx.createOscillator();
-        const gain3 = audioCtx.createGain();
-        osc3.type = 'sawtooth';
-        osc3.frequency.setValueAtTime(400, t + 0.01);
-        osc3.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-        gain3.gain.setValueAtTime(0.2, t + 0.01);
-        gain3.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
-        osc3.connect(gain3);
-        gain3.connect(audioCtx.destination);
-        osc3.start(t + 0.01);
-        osc3.stop(t + 0.06);
-        
-        // Noise burst for texture
-        const bufferSize = audioCtx.sampleRate * 0.1;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.1));
-        }
-        const noise = audioCtx.createBufferSource();
-        const noiseGain = audioCtx.createGain();
-        noise.buffer = buffer;
-        noiseGain.gain.setValueAtTime(0.15, t);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-        noise.connect(noiseGain);
-        noiseGain.connect(audioCtx.destination);
-        noise.start(t);
-        
-        return;
-      }
-      
-      if (type === 'chime') {
-        // Crystal chime - multiple harmonics for bell-like sound
-        const t = audioCtx.currentTime;
-        const baseFreq = 800 + Math.random() * 100; // Slight variation each time
-        
-        // Fundamental
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(baseFreq, t);
-        gain1.gain.setValueAtTime(0.25, t);
-        gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.8);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(t);
-        osc1.stop(t + 0.8);
-        
-        // Second harmonic
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(baseFreq * 2, t);
-        gain2.gain.setValueAtTime(0.15, t);
-        gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(t);
-        osc2.stop(t + 0.6);
-        
-        // Third harmonic
-        const osc3 = audioCtx.createOscillator();
-        const gain3 = audioCtx.createGain();
-        osc3.type = 'sine';
-        osc3.frequency.setValueAtTime(baseFreq * 3, t);
-        gain3.gain.setValueAtTime(0.1, t);
-        gain3.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
-        osc3.connect(gain3);
-        gain3.connect(audioCtx.destination);
-        osc3.start(t);
-        osc3.stop(t + 0.4);
-        
-        // High shimmer
-        const osc4 = audioCtx.createOscillator();
-        const gain4 = audioCtx.createGain();
-        osc4.type = 'sine';
-        osc4.frequency.setValueAtTime(baseFreq * 5.5, t);
-        gain4.gain.setValueAtTime(0.05, t);
-        gain4.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        osc4.connect(gain4);
-        gain4.connect(audioCtx.destination);
-        osc4.start(t);
-        osc4.stop(t + 0.3);
-        
-        return;
-      }
+      const t = audioCtx.currentTime;
+      const duration = 0.4;
 
-      // Original sounds for other effects
+      // Low grinding rumble
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(40, t);
+      osc1.frequency.linearRampToValueAtTime(35, t + duration);
+      gain1.gain.setValueAtTime(0.15, t);
+      gain1.gain.linearRampToValueAtTime(0.1, t + duration * 0.8);
+      gain1.gain.linearRampToValueAtTime(0, t + duration);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(t);
+      osc1.stop(t + duration);
+
+      // Noise for texture
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.3;
+      }
+      const noise = audioCtx.createBufferSource();
+      const noiseGain = audioCtx.createGain();
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'lowpass';
+      noiseFilter.frequency.setValueAtTime(200, t);
+      noise.buffer = buffer;
+      noiseGain.gain.setValueAtTime(0.1, t);
+      noiseGain.gain.linearRampToValueAtTime(0, t + duration);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start(t);
+    }
+
+    function playBoneCrack() {
+      initAudio();
+      const t = audioCtx.currentTime;
+
+      // Initial crack
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(120, t);
+      osc1.frequency.exponentialRampToValueAtTime(30, t + 0.08);
+      gain1.gain.setValueAtTime(0.5, t);
+      gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(t);
+      osc1.stop(t + 0.12);
+
+      // Secondary snap
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(200, t + 0.03);
+      osc2.frequency.exponentialRampToValueAtTime(50, t + 0.1);
+      gain2.gain.setValueAtTime(0.3, t + 0.03);
+      gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start(t + 0.03);
+      osc2.stop(t + 0.15);
+
+      // Crack noise
+      const bufferSize = audioCtx.sampleRate * 0.1;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.05));
+      }
+      const noise = audioCtx.createBufferSource();
+      const noiseGain = audioCtx.createGain();
+      noise.buffer = buffer;
+      noiseGain.gain.setValueAtTime(0.25, t);
+      noise.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start(t);
+    }
+
+    function playChime() {
+      initAudio();
+      const t = audioCtx.currentTime;
+      const baseFreq = 700 + Math.random() * 150;
+
+      [1, 2, 3, 5].forEach((mult, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(baseFreq * mult, t);
+        const vol = 0.2 / (i + 1);
+        const dur = 0.8 - i * 0.15;
+        gain.gain.setValueAtTime(vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + dur);
+      });
+    }
+
+    function playMetalSpin() {
+      initAudio();
+      const t = audioCtx.currentTime;
+
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(300, t);
+      osc.frequency.linearRampToValueAtTime(800, t + 0.1);
+      gain.gain.setValueAtTime(0.1, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.2);
+    }
 
-      if (type === 'snap-dread') {
+    function playLock() {
+      initAudio();
+      const t = audioCtx.currentTime;
+
+      if (mode === 'dread') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(60, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-      } else if (type === 'snap-ascended') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-      } else if (type === 'press-dread') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(40 + pressCount * 8, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-      } else if (type === 'press-ascended') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(300 + pressCount * 60, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-      } else if (type === 'complete') {
-        osc.type = mode === 'dread' ? 'sawtooth' : 'sine';
-        osc.frequency.setValueAtTime(mode === 'dread' ? 80 : 400, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(mode === 'dread' ? 20 : 800, audioCtx.currentTime + 0.5);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+        osc.frequency.setValueAtTime(80, t);
+        osc.frequency.exponentialRampToValueAtTime(25, t + 0.3);
+        gain.gain.setValueAtTime(0.4, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      } else {
+        [400, 500, 600, 800].forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t + i * 0.05);
+          gain.gain.setValueAtTime(0.15, t + i * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.6 + i * 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t + i * 0.05);
+          osc.stop(t + 0.7 + i * 0.05);
+        });
       }
-
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.6);
     }
 
-    // Mode selection
-    function setMode(newMode) {
-      mode = newMode;
-      phase = 1;
-      progress = 0;
-      pressCount = 0;
-      channelsFilled = 0;
-      outerRotation = 0;
-      middleRotation = 0;
-      isLocked = false;
+    function playPress() {
+      initAudio();
+      const t = audioCtx.currentTime;
 
-      // Update UI
-      document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelector(`.mode-btn.${mode}`).classList.add('active');
-      document.body.classList.remove('dread-active', 'ascended-active', 'calling');
-      document.body.classList.add(`${mode}-active`);
-      document.getElementById('progressFill').classList.remove('neutral');
-
-      // Reset visuals
-      document.getElementById('outerRing').setAttribute('transform', 'rotate(0, 190, 190)');
-      document.getElementById('middleRing').setAttribute('transform', 'rotate(0, 190, 190)');
-      document.querySelectorAll('.blood-channel').forEach(ch => ch.classList.remove('filled'));
-      document.querySelectorAll('.glyph').forEach(g => g.classList.remove('lit', 'target'));
-      clearPresses();
-      
-      // Reset rotation tracking
-      rotationCount = 0;
-      lastRotationMilestone = 0;
-      
-      // Reset rotation indicator dots
-      document.querySelectorAll('.rotation-dot').forEach(dot => dot.classList.remove('filled'));
-
-      // Set phase 1
-      updateUI();
-      addLog(mode === 'dread' 
-        ? 'The temperature drops. Shadows gather at the edges of your vision.' 
-        : 'The air shimmers with potential. Light begins to gather.', mode);
+      if (mode === 'dread') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(50 + pressCount * 10, t);
+        osc.frequency.exponentialRampToValueAtTime(30, t + 0.2);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.25);
+      } else {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400 + pressCount * 50, t);
+        gain.gain.setValueAtTime(0.15, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.3);
+      }
     }
 
+    // ============== UI UPDATES ==============
     function updateUI() {
-      const phaseEl = document.getElementById('actionPhase');
-      const instructEl = document.getElementById('actionInstruction');
-      const hintEl = document.getElementById('actionHint');
+      const phaseLabel = document.getElementById('phaseLabel');
+      const instructionText = document.getElementById('instructionText');
+      const instructionHint = document.getElementById('instructionHint');
+      const btnLeft = document.getElementById('btnLeft');
+      const btnRight = document.getElementById('btnRight');
+      const btnCenter = document.getElementById('btnCenter');
+      const rotCounter = document.getElementById('rotationCounter');
+      const pressCounter = document.getElementById('pressCounter');
+      const centerEye = document.getElementById('centerEye');
+      const centerEyeInner = document.getElementById('centerEyeInner');
 
-      // Highlight active ring
-      document.querySelectorAll('.ring-highlight').forEach(h => h.classList.remove('active'));
-      document.querySelectorAll('.ring-control').forEach(c => c.classList.remove('active-ring'));
-      document.getElementById('centerEye').classList.remove('clickable');
-      document.getElementById('centerEyeInner').classList.remove('active');
-      document.getElementById('targetMarker').classList.remove('visible');
-      document.getElementById('directionHint').classList.remove('visible', 'clockwise', 'counter-clockwise');
-      document.getElementById('rotationCounter').classList.remove('visible');
+      // Reset states
+      btnLeft.disabled = true;
+      btnRight.disabled = true;
+      btnCenter.disabled = true;
+      btnLeft.classList.remove('active');
+      btnRight.classList.remove('active');
+      btnCenter.classList.remove('active');
+      rotCounter.classList.remove('visible');
+      pressCounter.classList.remove('visible');
+      centerEye.classList.remove('clickable');
+      centerEyeInner.classList.remove('active');
 
       if (!mode) {
-        phaseEl.textContent = '— Awaiting Activation —';
-        instructEl.innerHTML = 'Choose a ritual above to begin the summoning.';
-        hintEl.textContent = 'Select your path wisely. There is always a cost.';
+        phaseLabel.textContent = '— Awaiting Activation —';
+        instructionText.innerHTML = 'Choose a ritual to begin the summoning.';
+        instructionHint.textContent = 'The dial hungers. The dial waits.';
+        btnCenter.textContent = 'SPIN';
         return;
       }
 
       if (phase === 1) {
-        phaseEl.textContent = 'Phase 1: THE PRIME';
-        document.getElementById('outerHighlight').classList.add('active');
-        document.getElementById('outerControl').classList.add('active-ring');
-        document.getElementById('rotationCounter').classList.add('visible');
+        phaseLabel.textContent = 'Phase 1: THE PRIME';
+        rotCounter.classList.add('visible');
         
-        const direction = mode === 'dread' ? 'COUNTER-CLOCKWISE' : 'CLOCKWISE';
-        const dirClass = mode === 'dread' ? 'counter-clockwise' : 'clockwise';
-        instructEl.innerHTML = `<strong>Drag the OUTER RING ${direction}</strong>`;
-        hintEl.textContent = 'Complete 3 full rotations. Each rotation seals the covenant.';
-        
-        document.getElementById('directionHint').classList.add('visible', dirClass);
-        
+        if (mode === 'dread') {
+          instructionText.innerHTML = 'Turn the Outer Ring <strong>WIDDERSHINS</strong> (counter-clockwise)';
+          instructionHint.textContent = `Click the LEFT arrow. Rotation ${rotationCount}/3`;
+          btnLeft.disabled = false;
+          btnLeft.classList.add('active');
+        } else {
+          instructionText.innerHTML = 'Turn the Outer Ring <strong>DEOSIL</strong> (clockwise)';
+          instructionHint.textContent = `Click the RIGHT arrow. Rotation ${rotationCount}/3`;
+          btnRight.disabled = false;
+          btnRight.classList.add('active');
+        }
+        btnCenter.textContent = 'SPIN';
+
       } else if (phase === 2) {
-        phaseEl.textContent = 'Phase 2: THE TUNE';
-        document.getElementById('middleHighlight').classList.add('active');
-        document.getElementById('middleControl').classList.add('active-ring');
-        document.getElementById('targetMarker').classList.add('visible');
+        phaseLabel.textContent = 'Phase 2: THE TUNE';
         
-        const targetGlyph = mode === 'dread' ? 'P' : 'S';
-        document.getElementById(`glyph-${targetGlyph}`).classList.add('target');
-        
-        instructEl.innerHTML = `<strong>Spin the MIDDLE RING</strong> — align glyph <strong>"${targetGlyph}"</strong> with the marker at TOP`;
-        hintEl.textContent = mode === 'dread' 
-          ? 'The 6th Chaos Hexagon. Wrong alignment causes spontaneous combustion.'
-          : 'The 9th Order Hexagon. Fear or ego will erase your mind.';
-          
+        if (!middleSpinning) {
+          instructionText.innerHTML = 'Press <strong>SPIN</strong> to release the Frequency Ring';
+          instructionHint.textContent = 'The smooth metal awaits your touch.';
+          btnCenter.textContent = 'SPIN';
+        } else {
+          instructionText.innerHTML = 'Press <strong>CATCH</strong> to lock the alignment!';
+          const targetGlyph = mode === 'dread' ? 'bottom' : 'top';
+          instructionHint.textContent = `Align the glowing glyph with the ${targetGlyph} marker.`;
+          btnCenter.textContent = 'CATCH';
+        }
+        btnCenter.disabled = false;
+        btnCenter.classList.add('active');
+
       } else if (phase === 3) {
-        phaseEl.textContent = 'Phase 3: THE PIERCE';
-        document.getElementById('innerHighlight').classList.add('active');
-        document.getElementById('innerControl').classList.add('active-ring');
-        document.getElementById('centerEye').classList.add('clickable');
+        phaseLabel.textContent = 'Phase 3: THE PIERCE';
+        pressCounter.classList.add('visible');
+        centerEye.classList.add('clickable');
         
-        instructEl.innerHTML = `<strong>Click the CENTER EYE 9 times</strong>`;
-        hintEl.textContent = `Presses: ${pressCount}/9 — ${getPressDescription()}`;
+        instructionText.innerHTML = 'Press the <strong>CENTER EYE</strong> nine times';
+        instructionHint.textContent = `Press ${pressCount}/9 — ${getPressPhase()}`;
         
+        btnCenter.textContent = 'PRESS';
+        btnCenter.disabled = false;
+        btnCenter.classList.add('active');
+
       } else if (phase === 4) {
-        phaseEl.textContent = '⛧ CONNECTION ESTABLISHED ⛧';
-        document.getElementById('centerEyeInner').classList.add('active');
+        phaseLabel.textContent = '⛧ THE LOCK ⛧';
+        centerEyeInner.classList.add('active');
         
-        instructEl.innerHTML = mode === 'dread'
-          ? '<strong>THE DREAD SPEAKS THROUGH YOU</strong>'
-          : '<strong>THE OTHERS SING THE WORD</strong>';
-        hintEl.textContent = 'The ritual is complete. The cost has been paid.';
-      }
-
-      updateProgress();
-    }
-
-    function getPressDescription() {
-      if (pressCount < 3) return mode === 'dread' ? 'Decay / Death' : 'Beginning / Birth';
-      if (pressCount < 6) return mode === 'dread' ? 'Chaos / Disease' : 'Balance / Body';
-      return mode === 'dread' ? 'Void / Nothingness' : 'Spirit / Transcendence';
-    }
-
-    function updateProgress() {
-      let pct = 0;
-      if (phase === 1) pct = Math.min((Math.abs(outerRotation) / 1080) * 33, 33);
-      else if (phase === 2) pct = 33;
-      else if (phase === 3) pct = 33 + (pressCount / 9) * 34;
-      else if (phase >= 4) pct = 100;
-
-      progress = pct;
-      document.getElementById('progressFill').style.width = `${pct}%`;
-      document.getElementById('progressLabel').textContent = `${Math.round(pct)}%`;
-    }
-
-    function clearPresses() {
-      for (let i = 1; i <= 9; i++) {
-        document.getElementById(`press${i}`).classList.remove('filled');
+        if (mode === 'dread') {
+          instructionText.innerHTML = '<strong>THE DREAD SPEAKS THROUGH YOU</strong>';
+          instructionHint.textContent = 'Your voice is no longer your own.';
+        } else {
+          instructionText.innerHTML = '<strong>THE OTHERS SING THE WORD</strong>';
+          instructionHint.textContent = 'The Song fills every corner of your being.';
+        }
+        btnCenter.textContent = '◉';
       }
     }
 
-    function addLog(message, type = 'system') {
-      const logEntries = document.getElementById('logEntries');
+    function getPressPhase() {
+      if (pressCount < 3) return mode === 'dread' ? 'Decay • Death' : 'Beginning • Birth';
+      if (pressCount < 6) return mode === 'dread' ? 'Chaos • Disease' : 'Balance • Body';
+      return mode === 'dread' ? 'Void • Nothingness' : 'Spirit • Transcendence';
+    }
+
+    function addLog(msg, type = 'system') {
+      const entries = document.getElementById('logEntries');
       const entry = document.createElement('div');
       entry.className = `log-entry ${type}`;
-      entry.textContent = message;
-      logEntries.appendChild(entry);
-      logEntries.scrollTop = logEntries.scrollHeight;
+      entry.textContent = msg;
+      entries.appendChild(entry);
+      entries.parentElement.scrollTop = entries.parentElement.scrollHeight;
     }
 
-    // Drag handling
-    let isDragging = false;
-    let activeRing = null;
-    let startAngle = 0;
-    let baseRotation = 0;
-
-    function getAngle(element, event) {
-      const rect = element.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const x = (event.touches ? event.touches[0].clientX : event.clientX) - cx;
-      const y = (event.touches ? event.touches[0].clientY : event.clientY) - cy;
-      return Math.atan2(y, x) * (180 / Math.PI);
+    function shake() {
+      document.body.classList.add('shaking');
+      setTimeout(() => document.body.classList.remove('shaking'), 150);
     }
 
-    function startDrag(ring, e) {
-      if (isLocked) return;
-      if (ring === 'outer' && phase !== 1) return;
-      if (ring === 'middle' && phase !== 2) return;
+    // ============== MODE SELECTION ==============
+    function setMode(newMode) {
+      mode = newMode;
+      phase = 1;
+      outerRotation = 0;
+      middleRotation = 0;
+      rotationCount = 0;
+      pressCount = 0;
+      middleSpinning = false;
 
-      isDragging = true;
-      activeRing = ring;
-      startAngle = getAngle(e.target, e);
-      baseRotation = ring === 'outer' ? outerRotation : middleRotation;
-      e.preventDefault();
-    }
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.mode-btn.${mode}`).classList.add('active');
+      document.body.classList.remove('dread-active', 'ascended-active');
+      document.body.classList.add(`${mode}-active`);
 
-    function moveDrag(e) {
-      if (!isDragging || !activeRing) return;
-      
-      const control = document.getElementById(`${activeRing}Control`);
-      const currentAngle = getAngle(control, e);
-      let delta = currentAngle - startAngle;
-      
-      if (delta > 180) delta -= 360;
-      if (delta < -180) delta += 360;
+      // Reset visuals
+      document.getElementById('outerRing').style.transform = '';
+      document.getElementById('middleRing').style.transform = '';
+      document.querySelectorAll('.blood-channel').forEach(c => c.classList.remove('filling', 'filled'));
+      document.querySelectorAll('.outer-glyph').forEach(g => g.classList.remove('active'));
+      document.querySelectorAll('.middle-glyph').forEach(g => g.classList.remove('target', 'aligned'));
+      document.querySelectorAll('.rot-indicator').forEach(r => r.classList.remove('filled'));
+      document.querySelectorAll('.press-dot').forEach(p => p.classList.remove('filled'));
 
-      const newRotation = baseRotation + delta;
-
-      if (activeRing === 'outer') {
-        outerRotation = newRotation;
-        document.getElementById('outerRing').setAttribute('transform', `rotate(${outerRotation}, 190, 190)`);
-
-        // Check direction and fill channels
-        const correctDirection = (mode === 'dread' && outerRotation < 0) || (mode === 'ascended' && outerRotation > 0);
-        
-        if (correctDirection) {
-          const rotations = Math.abs(outerRotation) / 360;
-          const currentRotationMilestone = Math.floor(rotations);
-          
-          // Play sound and show feedback for each completed rotation
-          if (currentRotationMilestone > lastRotationMilestone && currentRotationMilestone <= 3) {
-            lastRotationMilestone = currentRotationMilestone;
-            rotationCount = currentRotationMilestone;
-            
-            // Light up the rotation indicator
-            document.getElementById(`rot${rotationCount}`).classList.add('filled');
-            
-            // Play the appropriate sound
-            if (mode === 'dread') {
-              playSound('bone-crack');
-              addLog(`Rotation ${rotationCount}: CRACK. The bone-sound reverberates through your jaw.`, 'dread');
-            } else {
-              playSound('chime');
-              addLog(`Rotation ${rotationCount}: CHIME. A crystalline tone resonates in your chest.`, 'ascended');
-            }
-            
-            // Visual feedback - shake and flash
-            document.body.classList.add('calling');
-            setTimeout(() => document.body.classList.remove('calling'), 200);
-            
-            // Fill channels progressively (roughly 2-3 per rotation)
-            const targetChannels = Math.min(currentRotationMilestone * 3, 8);
-            for (let i = channelsFilled + 1; i <= targetChannels; i++) {
-              document.getElementById(`channel${i}`).classList.add('filled');
-            }
-            channelsFilled = targetChannels;
-            
-            // Update hint to show progress
-            document.getElementById('actionHint').textContent = `Rotation ${rotationCount}/3 complete. ${3 - rotationCount} remaining.`;
-          }
-
-          // Complete phase 1 after 3 rotations
-          if (rotations >= 3 && phase === 1) {
-            isDragging = false;
-            activeRing = null;
-            playSound(`snap-${mode}`);
-            phase = 2;
-            
-            // Fill any remaining channels
-            for (let i = 1; i <= 8; i++) {
-              document.getElementById(`channel${i}`).classList.add('filled');
-            }
-            
-            updateUI();
-            addLog('═══════════════════════════════', 'system');
-            addLog('THE PRIME IS COMPLETE. The dial AWAKENS.', mode);
-            addLog(mode === 'dread' 
-              ? 'A final SNAP like a spine breaking. The channels overflow with crimson.' 
-              : 'A final CHIME echoes into infinity. Light pools in the channels.', 'warning');
-          }
-        }
-        
-        updateProgress();
-
-      } else if (activeRing === 'middle') {
-        middleRotation = newRotation;
-        document.getElementById('middleRing').setAttribute('transform', `rotate(${middleRotation}, 190, 190)`);
-      }
-
-      e.preventDefault();
-    }
-
-    function endDrag() {
-      if (!isDragging) return;
-
-      // Check alignment for phase 2
-      if (activeRing === 'middle' && phase === 2) {
-        const norm = ((middleRotation % 360) + 360) % 360;
-        
-        // P is at ~225°, S is at ~45° from start
-        const targetDread = 225;
-        const targetAscended = 45;
-        const tolerance = 20;
-
-        const aligned = (mode === 'dread' && Math.abs(norm - targetDread) < tolerance) ||
-                        (mode === 'ascended' && Math.abs(norm - targetAscended) < tolerance);
-
-        if (aligned) {
-          playSound(`snap-${mode}`);
-          phase = 3;
-          updateUI();
-          addLog('ALIGNMENT ACHIEVED. The frequency locks into place.', mode);
-          addLog(mode === 'dread'
-            ? 'A high-pitched SCREAM begins inside your skull.'
-            : 'A harmonic CHOIR vibrates through your consciousness.', 'warning');
-        }
-      }
-
-      isDragging = false;
-      activeRing = null;
-    }
-
-    // Center eye click for phase 3
-    function pressCenter() {
-      if (phase !== 3 || isLocked) return;
-
-      pressCount++;
-      playSound(`press-${mode}`);
-      document.getElementById(`press${pressCount}`).classList.add('filled');
-
-      // Shake
-      document.body.classList.add('calling');
-      setTimeout(() => document.body.classList.remove('calling'), 150);
+      // Set target glyph
+      const targetId = mode === 'dread' ? 'mg4' : 'mg1';
+      document.getElementById(targetId).classList.add('target');
 
       updateUI();
 
-      // Log messages
-      const messages = mode === 'dread' ? [
-        'A cold pulse. Shadows deepen.',
-        'The device drinks. Light dims.',
-        'DECAY. Your hand is FUSED to the dial.',
-        'Chaos energy floods your veins.',
-        'Something watches from the dark.',
-        'DISEASE. Blood pools beneath you.',
-        'The void opens.',
-        'Reality tears at the seams.',
-        'NOTHINGNESS. The Dread answers...'
-      ] : [
-        'A warm pulse. Colors brighten.',
-        'The song begins, distant but beautiful.',
-        'BIRTH. You feel unity with everything.',
-        'Balance. Harmony. Peace.',
-        'Tears of joy stream down your face.',
-        'BODY. You are whole for the first time.',
-        'The light intensifies.',
-        'Transcendence approaches.',
-        'SPIRIT. The Others sing The Word...'
-      ];
-
-      addLog(`Press ${pressCount}: ${messages[pressCount - 1]}`, pressCount % 3 === 0 ? 'warning' : mode);
-
-      if (pressCount >= 9) {
-        completeLock();
+      if (mode === 'dread') {
+        addLog('The temperature plummets. Frost forms on the dial\'s surface.', 'dread');
+        addLog('Your blood calls to the channels. The ritual begins.', 'system');
+      } else {
+        addLog('Light gathers at the edges of perception. The air tastes of ozone.', 'ascended');
+        addLog('Surrender your ego. The ritual begins.', 'system');
       }
     }
 
+    // ============== OUTER RING ROTATION ==============
+    function rotateOuter(direction) {
+      if (phase !== 1) return;
+
+      const correctDir = (mode === 'dread' && direction === 'left') || 
+                         (mode === 'ascended' && direction === 'right');
+      if (!correctDir) return;
+
+      playGrind();
+
+      // Rotate by 120 degrees (1/3 of full rotation)
+      const delta = direction === 'left' ? -120 : 120;
+      outerRotation += delta;
+
+      document.getElementById('outerRing').style.transform = `rotate(${outerRotation}deg)`;
+      document.getElementById('outerRing').style.transformOrigin = '180px 180px';
+
+      // Check for completed rotation
+      const completedRotations = Math.floor(Math.abs(outerRotation) / 360);
+      
+      if (completedRotations > rotationCount) {
+        rotationCount = completedRotations;
+        
+        // Fill blood channel
+        for (let i = 1; i <= rotationCount * 3 && i <= 8; i++) {
+          document.getElementById(`bc${i}`).classList.add('filled');
+        }
+
+        // Light up rotation indicator
+        document.getElementById(`rot${rotationCount}`).classList.add('filled');
+
+        // Light up outer glyphs
+        for (let i = 1; i <= rotationCount * 3; i++) {
+          document.getElementById(`og${i}`).classList.add('active');
+        }
+
+        shake();
+
+        if (mode === 'dread') {
+          playBoneCrack();
+          addLog(`Rotation ${rotationCount}: CRACK — The sound of breaking bone fills your skull.`, 'dread');
+        } else {
+          playChime();
+          addLog(`Rotation ${rotationCount}: CHIME — Crystal resonance floods your chest.`, 'ascended');
+        }
+
+        // Check for phase completion
+        if (rotationCount >= 3) {
+          setTimeout(() => {
+            phase = 2;
+            addLog('═══════════════════════════════', 'system');
+            addLog('THE PRIME IS COMPLETE.', mode);
+            addLog('The blood channels overflow. The outer ring locks.', 'warning');
+            updateUI();
+          }, 500);
+        } else {
+          document.getElementById('instructionHint').textContent = 
+            `Rotation ${rotationCount}/3 complete. ${3 - rotationCount} remaining.`;
+        }
+      }
+    }
+
+    // ============== MIDDLE RING SPINNING ==============
+    function centerAction() {
+      if (phase === 2) {
+        if (!middleSpinning) {
+          startMiddleSpin();
+        } else {
+          catchMiddleRing();
+        }
+      } else if (phase === 3) {
+        pressInner();
+      }
+    }
+
+    function startMiddleSpin() {
+      middleSpinning = true;
+      middleSpinSpeed = 15; // degrees per frame
+      playMetalSpin();
+      addLog('The frequency ring spins freely — almost frictionless.', 'system');
+      updateUI();
+
+      middleSpinInterval = setInterval(() => {
+        middleRotation = (middleRotation + middleSpinSpeed) % 360;
+        document.getElementById('middleRing').style.transform = `rotate(${middleRotation}deg)`;
+        document.getElementById('middleRing').style.transformOrigin = '180px 180px';
+
+        // Gradually slow down slightly for drama
+        if (middleSpinSpeed > 8) {
+          middleSpinSpeed *= 0.998;
+        }
+      }, 16);
+    }
+
+    function catchMiddleRing() {
+      clearInterval(middleSpinInterval);
+      middleSpinning = false;
+
+      // Check alignment - target is at 180° for dread (bottom), 0° for ascended (top)
+      const targetAngle = mode === 'dread' ? 180 : 0;
+      const tolerance = 25;
+      
+      let diff = Math.abs(middleRotation - targetAngle);
+      if (diff > 180) diff = 360 - diff;
+
+      const aligned = diff <= tolerance;
+
+      if (aligned) {
+        playLock();
+        shake();
+        
+        // Snap to exact position
+        middleRotation = targetAngle;
+        document.getElementById('middleRing').style.transform = `rotate(${middleRotation}deg)`;
+        
+        const targetId = mode === 'dread' ? 'mg4' : 'mg1';
+        document.getElementById(targetId).classList.remove('target');
+        document.getElementById(targetId).classList.add('aligned');
+
+        addLog('═══════════════════════════════', 'system');
+        addLog('ALIGNMENT ACHIEVED — The frequency locks!', mode);
+        
+        if (mode === 'dread') {
+          addLog('The blood fuses with the mechanism. Heat builds.', 'warning');
+          addLog('A scream begins inside your skull...', 'dread');
+        } else {
+          addLog('Harmonic resonance achieved. Light pools in the channels.', 'holy');
+          addLog('A choir begins to sing from within...', 'ascended');
+        }
+
+        setTimeout(() => {
+          phase = 3;
+          updateUI();
+        }, 800);
+      } else {
+        // Missed - ring keeps spinning but slower
+        addLog('The ring slips through your fingers! Try again.', 'warning');
+        middleSpinSpeed = 10;
+        startMiddleSpin();
+      }
+    }
+
+    // ============== INNER RING PRESS ==============
+    function pressInner() {
+      if (phase !== 3) return;
+
+      pressCount++;
+      playPress();
+      shake();
+
+      document.getElementById(`p${pressCount}`).classList.add('filled');
+      document.getElementById(`ig${pressCount}`).classList.add('active');
+
+      const messages = mode === 'dread' ? [
+        'A cold pulse. The void opens slightly.',
+        'Darkness seeps from the dial.',
+        'DECAY — Your hand fuses to the surface.',
+        'Chaos energy floods your veins.',
+        'Something ancient stirs.',
+        'DISEASE — Blood pools beneath you.',
+        'Reality tears at the edges.',
+        'The whispers become screams.',
+        'NOTHINGNESS — The Dread answers...'
+      ] : [
+        'A warm pulse. Light gathers.',
+        'The Song begins, distant but beautiful.',
+        'BIRTH — You feel connected to everything.',
+        'Balance flows through you.',
+        'Joy overwhelms your senses.',
+        'BODY — You are whole.',
+        'Transcendence approaches.',
+        'The choir crescendos.',
+        'SPIRIT — The Others sing The Word...'
+      ];
+
+      const logType = pressCount % 3 === 0 ? 'warning' : mode;
+      addLog(`Press ${pressCount}: ${messages[pressCount - 1]}`, logType);
+
+      document.getElementById('instructionHint').textContent = 
+        `Press ${pressCount}/9 — ${getPressPhase()}`;
+
+      if (pressCount >= 9) {
+        setTimeout(completeLock, 500);
+      }
+    }
+
+    // ============== COMPLETION ==============
     function completeLock() {
       phase = 4;
-      isLocked = true;
-      playSound('complete');
+      playLock();
+      shake();
       updateUI();
 
       addLog('═══════════════════════════════', 'system');
@@ -1550,58 +1645,37 @@
     function dismissCall() {
       document.getElementById('callOverlay').className = 'call-overlay';
       addLog('The connection severs. Silence returns.', 'system');
-      addLog('The ritual is complete. You are forever changed.', 'warning');
+      addLog('You are forever changed.', 'warning');
     }
 
+    // ============== RESET ==============
     function resetDial() {
+      if (middleSpinInterval) clearInterval(middleSpinInterval);
+      
       mode = null;
       phase = 0;
       outerRotation = 0;
       middleRotation = 0;
-      pressCount = 0;
-      progress = 0;
-      channelsFilled = 0;
-      isLocked = false;
       rotationCount = 0;
-      lastRotationMilestone = 0;
+      pressCount = 0;
+      middleSpinning = false;
 
-      document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-      document.body.classList.remove('dread-active', 'ascended-active', 'calling');
-      
-      document.getElementById('outerRing').setAttribute('transform', 'rotate(0, 190, 190)');
-      document.getElementById('middleRing').setAttribute('transform', 'rotate(0, 190, 190)');
-      document.querySelectorAll('.blood-channel').forEach(ch => ch.classList.remove('filled'));
-      document.querySelectorAll('.glyph').forEach(g => g.classList.remove('lit', 'target'));
-      
-      clearPresses();
-      document.querySelectorAll('.rotation-dot').forEach(dot => dot.classList.remove('filled'));
-      document.getElementById('progressFill').style.width = '0%';
-      document.getElementById('progressFill').classList.add('neutral');
-      document.getElementById('progressLabel').textContent = '0%';
-      
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.body.classList.remove('dread-active', 'ascended-active');
+
+      document.getElementById('outerRing').style.transform = '';
+      document.getElementById('middleRing').style.transform = '';
+      document.querySelectorAll('.blood-channel').forEach(c => c.classList.remove('filling', 'filled'));
+      document.querySelectorAll('.outer-glyph').forEach(g => g.classList.remove('active'));
+      document.querySelectorAll('.middle-glyph').forEach(g => g.classList.remove('target', 'aligned'));
+      document.querySelectorAll('.inner-glyph').forEach(g => g.classList.remove('active'));
+      document.querySelectorAll('.rot-indicator').forEach(r => r.classList.remove('filled'));
+      document.querySelectorAll('.press-dot').forEach(p => p.classList.remove('filled'));
+
       updateUI();
-      
-      document.getElementById('logEntries').innerHTML = '<div class="log-entry system">The dial lies dormant beneath centuries of silence...</div>';
+      document.getElementById('logEntries').innerHTML = 
+        '<div class="log-entry system">The dial rests in darkness, its surface cold as the void between stars...</div>';
     }
-
-    // Event listeners
-    const outerCtrl = document.getElementById('outerControl');
-    const middleCtrl = document.getElementById('middleControl');
-    const innerCtrl = document.getElementById('innerControl');
-    const centerEye = document.getElementById('centerEye');
-
-    outerCtrl.addEventListener('mousedown', (e) => startDrag('outer', e));
-    outerCtrl.addEventListener('touchstart', (e) => startDrag('outer', e));
-    middleCtrl.addEventListener('mousedown', (e) => startDrag('middle', e));
-    middleCtrl.addEventListener('touchstart', (e) => startDrag('middle', e));
-
-    document.addEventListener('mousemove', moveDrag);
-    document.addEventListener('touchmove', moveDrag);
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchend', endDrag);
-
-    innerCtrl.addEventListener('click', pressCenter);
-    centerEye.addEventListener('click', pressCenter);
 
     // Initialize
     updateUI();
