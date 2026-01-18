@@ -1087,307 +1087,118 @@
     // ============== AUDIO ==============
     let audioCtx = null;
     
-    // Embedded audio files (base64)
-    const AUDIO_GRIND = 'data:audio/mp3;base64,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VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//t0xL0D0KyW3G1l5cAAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+    // Dropbox base URL (converted from share link)
+    const DB_BASE = 'https://dl.dropboxusercontent.com/scl/fo/2p0wg4br8dba7mo0p5md1/AF64owSbqrv7XMvHyyw8CCg';
+    const DB_PARAMS = 'rlkey=fh5z6t1zns65xpp54y1azc3ke&dl=1';
+    
+    // Sound file URLs
+    const SOUNDS = {
+      rockSliding: `${DB_BASE}/Rock%20Sliding.mp3?${DB_PARAMS}`,
+      metalSwoosh: `${DB_BASE}/Metal%20Swoosh.mp3?${DB_PARAMS}`,
+      lock: `${DB_BASE}/Lock.mp3?${DB_PARAMS}`,
+      staticDread: `${DB_BASE}/Static.mp3?${DB_PARAMS}`,
+      angelsOthers: `${DB_BASE}/Angels.mp3?${DB_PARAMS}`,
+      clicks: [
+        `${DB_BASE}/Click%201.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Click%202.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Click%203.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Click%204.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Click%205.mp3?${DB_PARAMS}`
+      ],
+      boneCracks: [
+        `${DB_BASE}/Bone%20Crack%201.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Bone%20Crack%202.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Bone%20Crack%203.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Bone%20Crack%204.mp3?${DB_PARAMS}`
+      ],
+      chimes: [
+        `${DB_BASE}/Chime%201.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Chime%202.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Chime%203.mp3?${DB_PARAMS}`,
+        `${DB_BASE}/Chime%204.mp3?${DB_PARAMS}`
+      ]
+    };
+
+    // Pre-load audio elements
+    const audioCache = {};
+    
+    function preloadSound(name, url) {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = url;
+      audioCache[name] = audio;
+      return audio;
+    }
+    
+    // Preload all sounds
+    preloadSound('rockSliding', SOUNDS.rockSliding);
+    preloadSound('metalSwoosh', SOUNDS.metalSwoosh);
+    preloadSound('lock', SOUNDS.lock);
+    preloadSound('staticDread', SOUNDS.staticDread);
+    preloadSound('angelsOthers', SOUNDS.angelsOthers);
+    SOUNDS.clicks.forEach((url, i) => preloadSound(`click${i}`, url));
+    SOUNDS.boneCracks.forEach((url, i) => preloadSound(`boneCrack${i}`, url));
+    SOUNDS.chimes.forEach((url, i) => preloadSound(`chime${i}`, url));
 
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-      // Resume audio context if it's suspended (browser autoplay policy)
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
     }
 
-    // Pre-loaded audio elements for real sound files
-    const grindAudio = new Audio(AUDIO_GRIND);
-    grindAudio.volume = 0.7;
-
-    function playGrind() {
+    function playSound(name, volume = 0.7) {
       initAudio();
-      // Clone and play for overlapping sounds
-      const sound = grindAudio.cloneNode();
-      sound.volume = 0.7;
-      sound.play().catch(e => console.log('Audio play failed:', e));
+      const cached = audioCache[name];
+      if (cached) {
+        const sound = cached.cloneNode();
+        sound.volume = volume;
+        sound.play().catch(e => console.log('Audio play failed:', e));
+        return sound;
+      }
+    }
+    
+    function playRandomSound(prefix, count, volume = 0.7) {
+      const index = Math.floor(Math.random() * count);
+      return playSound(`${prefix}${index}`, volume);
+    }
+
+    // Sound playing functions
+    function playGrind() {
+      playSound('rockSliding', 0.6);
     }
 
     function playBoneCrack() {
-      initAudio();
-      const t = audioCtx.currentTime;
-
-      // Initial loud crack
-      const osc1 = audioCtx.createOscillator();
-      const gain1 = audioCtx.createGain();
-      osc1.type = 'sawtooth';
-      osc1.frequency.setValueAtTime(150, t);
-      osc1.frequency.exponentialRampToValueAtTime(25, t + 0.1);
-      gain1.gain.setValueAtTime(0.6, t);
-      gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
-      osc1.connect(gain1);
-      gain1.connect(audioCtx.destination);
-      osc1.start(t);
-      osc1.stop(t + 0.15);
-
-      // Secondary snap - louder
-      const osc2 = audioCtx.createOscillator();
-      const gain2 = audioCtx.createGain();
-      osc2.type = 'square';
-      osc2.frequency.setValueAtTime(250, t + 0.02);
-      osc2.frequency.exponentialRampToValueAtTime(40, t + 0.12);
-      gain2.gain.setValueAtTime(0.45, t + 0.02);
-      gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.18);
-      osc2.connect(gain2);
-      gain2.connect(audioCtx.destination);
-      osc2.start(t + 0.02);
-      osc2.stop(t + 0.18);
-
-      // Third layer - deep thud
-      const osc3 = audioCtx.createOscillator();
-      const gain3 = audioCtx.createGain();
-      osc3.type = 'sine';
-      osc3.frequency.setValueAtTime(60, t);
-      osc3.frequency.exponentialRampToValueAtTime(20, t + 0.2);
-      gain3.gain.setValueAtTime(0.5, t);
-      gain3.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-      osc3.connect(gain3);
-      gain3.connect(audioCtx.destination);
-      osc3.start(t);
-      osc3.stop(t + 0.25);
-
-      // Loud crack noise burst
-      const bufferSize = audioCtx.sampleRate * 0.15;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.03));
-      }
-      const noise = audioCtx.createBufferSource();
-      const noiseGain = audioCtx.createGain();
-      noise.buffer = buffer;
-      noiseGain.gain.setValueAtTime(0.5, t);
-      noise.connect(noiseGain);
-      noiseGain.connect(audioCtx.destination);
-      noise.start(t);
+      playRandomSound('boneCrack', 4, 0.8);
     }
 
     function playChime() {
-      initAudio();
-      const t = audioCtx.currentTime;
-      const baseFreq = 600 + Math.random() * 100;
-
-      // Multiple harmonics for rich bell sound - louder
-      [1, 2, 3, 4, 5.5].forEach((mult, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(baseFreq * mult, t);
-        const vol = 0.35 / (i + 1);
-        const dur = 1.0 - i * 0.12;
-        gain.gain.setValueAtTime(vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(t);
-        osc.stop(t + dur);
-      });
-
-      // Add a subtle attack click for presence
-      const click = audioCtx.createOscillator();
-      const clickGain = audioCtx.createGain();
-      click.type = 'triangle';
-      click.frequency.setValueAtTime(2000, t);
-      click.frequency.exponentialRampToValueAtTime(500, t + 0.02);
-      clickGain.gain.setValueAtTime(0.2, t);
-      clickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
-      click.connect(clickGain);
-      clickGain.connect(audioCtx.destination);
-      click.start(t);
-      click.stop(t + 0.03);
+      playRandomSound('chime', 4, 0.7);
     }
 
     function playMetalSpin() {
-      initAudio();
-      const t = audioCtx.currentTime;
-
-      // Whooshing rise
-      const osc1 = audioCtx.createOscillator();
-      const gain1 = audioCtx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(200, t);
-      osc1.frequency.exponentialRampToValueAtTime(1200, t + 0.3);
-      gain1.gain.setValueAtTime(0.25, t);
-      gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
-      osc1.connect(gain1);
-      gain1.connect(audioCtx.destination);
-      osc1.start(t);
-      osc1.stop(t + 0.35);
-
-      // Metallic shimmer
-      const osc2 = audioCtx.createOscillator();
-      const gain2 = audioCtx.createGain();
-      osc2.type = 'triangle';
-      osc2.frequency.setValueAtTime(800, t);
-      osc2.frequency.exponentialRampToValueAtTime(2000, t + 0.2);
-      gain2.gain.setValueAtTime(0.15, t);
-      gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-      osc2.connect(gain2);
-      gain2.connect(audioCtx.destination);
-      osc2.start(t);
-      osc2.stop(t + 0.25);
-
-      // Friction whoosh noise
-      const bufferSize = audioCtx.sampleRate * 0.3;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        const env = Math.sin((i / bufferSize) * Math.PI);
-        data[i] = (Math.random() * 2 - 1) * env * 0.3;
-      }
-      const noise = audioCtx.createBufferSource();
-      const noiseGain = audioCtx.createGain();
-      const noiseFilter = audioCtx.createBiquadFilter();
-      noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.setValueAtTime(1000, t);
-      noiseFilter.Q.setValueAtTime(1, t);
-      noise.buffer = buffer;
-      noiseGain.gain.setValueAtTime(0.2, t);
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(audioCtx.destination);
-      noise.start(t);
+      playSound('metalSwoosh', 0.7);
     }
 
     function playLock() {
-      initAudio();
-      const t = audioCtx.currentTime;
-
-      if (mode === 'dread') {
-        // Heavy metallic clunk
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(100, t);
-        osc1.frequency.exponentialRampToValueAtTime(20, t + 0.4);
-        gain1.gain.setValueAtTime(0.6, t);
-        gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(t);
-        osc1.stop(t + 0.5);
-
-        // Distorted crunch
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'square';
-        osc2.frequency.setValueAtTime(60, t);
-        osc2.frequency.exponentialRampToValueAtTime(15, t + 0.3);
-        gain2.gain.setValueAtTime(0.4, t);
-        gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(t);
-        osc2.stop(t + 0.35);
-
-        // Impact noise
-        const bufferSize = audioCtx.sampleRate * 0.2;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.05));
-        }
-        const noise = audioCtx.createBufferSource();
-        const noiseGain = audioCtx.createGain();
-        noise.buffer = buffer;
-        noiseGain.gain.setValueAtTime(0.4, t);
-        noise.connect(noiseGain);
-        noiseGain.connect(audioCtx.destination);
-        noise.start(t);
-      } else {
-        // Ascending chord with more presence
-        [400, 500, 600, 800, 1000].forEach((freq, i) => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, t + i * 0.04);
-          gain.gain.setValueAtTime(0.25, t + i * 0.04);
-          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.8 + i * 0.04);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(t + i * 0.04);
-          osc.stop(t + 0.9 + i * 0.04);
-        });
-
-        // Shimmer overlay
-        const shimmer = audioCtx.createOscillator();
-        const shimmerGain = audioCtx.createGain();
-        shimmer.type = 'triangle';
-        shimmer.frequency.setValueAtTime(2000, t);
-        shimmerGain.gain.setValueAtTime(0.1, t);
-        shimmerGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-        shimmer.connect(shimmerGain);
-        shimmerGain.connect(audioCtx.destination);
-        shimmer.start(t);
-        shimmer.stop(t + 0.5);
-      }
+      playSound('lock', 0.8);
     }
 
     function playPress() {
-      initAudio();
-      const t = audioCtx.currentTime;
-
+      playRandomSound('click', 5, 0.6);
+    }
+    
+    function playFinalRitual() {
       if (mode === 'dread') {
-        // Deep thud that gets deeper with each press
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'square';
-        osc1.frequency.setValueAtTime(60 + pressCount * 8, t);
-        osc1.frequency.exponentialRampToValueAtTime(25, t + 0.25);
-        gain1.gain.setValueAtTime(0.4, t);
-        gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(t);
-        osc1.stop(t + 0.3);
-
-        // Static crackle
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'sawtooth';
-        osc2.frequency.setValueAtTime(100, t);
-        osc2.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-        gain2.gain.setValueAtTime(0.25, t);
-        gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(t);
-        osc2.stop(t + 0.2);
+        return playSound('staticDread', 0.8);
       } else {
-        // Ascending tone that gets higher with each press
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(400 + pressCount * 60, t);
-        gain.gain.setValueAtTime(0.3, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(t);
-        osc.stop(t + 0.4);
-
-        // Harmonic overlay
-        const harm = audioCtx.createOscillator();
-        const harmGain = audioCtx.createGain();
-        harm.type = 'triangle';
-        harm.frequency.setValueAtTime((400 + pressCount * 60) * 2, t);
-        harmGain.gain.setValueAtTime(0.15, t);
-        harmGain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        harm.connect(harmGain);
-        harmGain.connect(audioCtx.destination);
-        harm.start(t);
-        harm.stop(t + 0.3);
+        return playSound('angelsOthers', 0.8);
       }
     }
+
+    // ============== DOM ELEMENTS ==============
 
     // ============== UI UPDATES ==============
     function updateUI() {
@@ -1738,6 +1549,9 @@
       addLog('THE LOCK IS COMPLETE', mode === 'dread' ? 'danger' : 'holy');
 
       setTimeout(() => {
+        // Play the final ritual sound (Static for Dread, Angels for Others)
+        playFinalRitual();
+        
         if (mode === 'dread') {
           showCall('W̷E̸ ̵H̷A̶V̵E̷ ̸W̶A̷I̵T̴E̸D̵.̷ ̶W̵E̶ ̴H̸A̶V̵E̶ ̷H̸U̴N̵G̶E̷R̸E̶D̵.̷ ̶Y̴O̸U̵R̶ ̷F̶L̷E̸S̵H̵ ̴I̸S̷ ̵O̴U̶R̷ ̴V̷E̸S̵S̵E̴L̵ ̶N̸O̷W̵.̸ ̷W̸E̴ ̵S̵E̷E̵ ̵T̸H̷R̶O̷U̸G̵H̶ ̸Y̴O̷U̶R̷ ̵E̷Y̸E̵S̷.̴ ̶W̷E̷ ̵S̶P̸E̸A̶K̷ ̸W̵I̷T̶H̴ ̶Y̵O̵U̷R̵ ̵T̴O̵N̵G̵U̴E̸.̷');
         } else {
