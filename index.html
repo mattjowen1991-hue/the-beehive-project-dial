@@ -316,20 +316,50 @@
       transition: stroke 0.3s ease, filter 0.3s ease;
     }
 
+    /* When spinning - all runes glow */
+    body.dread-active.spinning .middle-glyph {
+      stroke: #8B0000;
+      stroke-width: 1.5;
+      filter: drop-shadow(0 0 8px #8B0000);
+    }
+    
+    body.ascended-active.spinning .middle-glyph {
+      stroke: #DAA520;
+      stroke-width: 1.5;
+      filter: drop-shadow(0 0 8px #DAA520);
+    }
+
     .middle-glyph.target {
       stroke: #00ff88;
-      stroke-width: 1.5;
+      stroke-width: 2;
       filter: drop-shadow(0 0 5px #00ff88);
     }
 
-    body.dread-active .middle-glyph.target {
-      stroke: var(--dread-glow);
-      filter: drop-shadow(0 0 5px var(--dread-red));
+    /* Target rune - contrasting color when spinning */
+    body.dread-active .middle-glyph.target,
+    body.dread-active.spinning .middle-glyph.target {
+      stroke: #9932CC;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 12px #9932CC) drop-shadow(0 0 20px #8A2BE2);
+      animation: target-pulse-dread 0.8s ease-in-out infinite;
     }
 
-    body.ascended-active .middle-glyph.target {
-      stroke: var(--ascended-glow);
-      filter: drop-shadow(0 0 5px var(--ascended-gold));
+    body.ascended-active .middle-glyph.target,
+    body.ascended-active.spinning .middle-glyph.target {
+      stroke: #FF4500;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 12px #FF4500) drop-shadow(0 0 20px #FF6347);
+      animation: target-pulse-ascended 0.8s ease-in-out infinite;
+    }
+    
+    @keyframes target-pulse-dread {
+      0%, 100% { filter: drop-shadow(0 0 12px #9932CC) drop-shadow(0 0 20px #8A2BE2); }
+      50% { filter: drop-shadow(0 0 20px #9932CC) drop-shadow(0 0 35px #8A2BE2); }
+    }
+    
+    @keyframes target-pulse-ascended {
+      0%, 100% { filter: drop-shadow(0 0 12px #FF4500) drop-shadow(0 0 20px #FF6347); }
+      50% { filter: drop-shadow(0 0 20px #FF4500) drop-shadow(0 0 35px #FF6347); }
     }
 
     .middle-glyph.aligned {
@@ -339,18 +369,130 @@
     }
 
     body.dread-active .middle-glyph.aligned {
-      stroke: var(--dread-glow);
-      filter: drop-shadow(0 0 10px var(--dread-red));
+      stroke: #9932CC;
+      filter: drop-shadow(0 0 15px #9932CC);
     }
 
     body.ascended-active .middle-glyph.aligned {
-      stroke: var(--ascended-glow);
-      filter: drop-shadow(0 0 10px var(--ascended-gold));
+      stroke: #FF4500;
+      filter: drop-shadow(0 0 15px #FF4500);
     }
 
     @keyframes glyph-pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
+    }
+    
+    /* Catch zone indicator - atmospheric mist/smoke effect */
+    .catch-zone {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+    
+    .catch-zone::before,
+    .catch-zone::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+    
+    body.dread-active.spinning .catch-zone {
+      opacity: 1;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    body.dread-active.spinning .catch-zone::before {
+      width: 100%;
+      height: 70%;
+      top: 15%;
+      left: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 30% 50%, rgba(153, 50, 204, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 70% 40%, rgba(138, 43, 226, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 90% 40% at 50% 80%, rgba(75, 0, 130, 0.3) 0%, transparent 60%);
+      filter: blur(8px);
+      animation: mist-drift-dread 3s ease-in-out infinite;
+    }
+    
+    body.dread-active.spinning .catch-zone::after {
+      width: 80%;
+      height: 60%;
+      top: 20%;
+      left: 10%;
+      background: 
+        radial-gradient(ellipse 70% 90% at 60% 30%, rgba(153, 50, 204, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 70% at 30% 70%, rgba(138, 43, 226, 0.3) 0%, transparent 60%);
+      filter: blur(6px);
+      animation: mist-drift-dread 2.5s ease-in-out infinite reverse;
+    }
+    
+    body.ascended-active.spinning .catch-zone {
+      opacity: 1;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    body.ascended-active.spinning .catch-zone::before {
+      width: 100%;
+      height: 70%;
+      top: 15%;
+      left: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 30% 50%, rgba(255, 69, 0, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 70% 40%, rgba(255, 140, 0, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 90% 40% at 50% 80%, rgba(255, 165, 0, 0.3) 0%, transparent 60%);
+      filter: blur(8px);
+      animation: mist-drift-ascended 3s ease-in-out infinite;
+    }
+    
+    body.ascended-active.spinning .catch-zone::after {
+      width: 80%;
+      height: 60%;
+      top: 20%;
+      left: 10%;
+      background: 
+        radial-gradient(ellipse 70% 90% at 60% 30%, rgba(255, 69, 0, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 70% at 30% 70%, rgba(255, 99, 71, 0.3) 0%, transparent 60%);
+      filter: blur(6px);
+      animation: mist-drift-ascended 2.5s ease-in-out infinite reverse;
+    }
+    
+    @keyframes mist-drift-dread {
+      0%, 100% { 
+        transform: translateX(-5px) translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      33% {
+        transform: translateX(5px) translateY(-3px) scale(1.1);
+        opacity: 1;
+      }
+      66% {
+        transform: translateX(-3px) translateY(3px) scale(0.95);
+        opacity: 0.8;
+      }
+    }
+    
+    @keyframes mist-drift-ascended {
+      0%, 100% { 
+        transform: translateX(5px) translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      33% {
+        transform: translateX(-5px) translateY(3px) scale(1.1);
+        opacity: 1;
+      }
+      66% {
+        transform: translateX(3px) translateY(-3px) scale(0.95);
+        opacity: 0.8;
+      }
     }
 
     /* Inner Ring - Static electricity feel */
@@ -962,6 +1104,8 @@
     <!-- The Dial Assembly -->
     <div class="dial-assembly">
       <div class="dial-frame">
+        <!-- Catch Zone Indicator -->
+        <div class="catch-zone" id="catchZone"></div>
         <svg class="dial-svg" viewBox="0 0 360 360" id="dialSvg">
           <defs>
             <!-- Outer Ring Rock Texture -->
@@ -1629,7 +1773,10 @@
 
     function startMiddleSpin() {
       middleSpinning = true;
-      middleSpinSpeed = 15; // degrees per frame
+      middleSpinSpeed = 12; // degrees per frame (balanced speed)
+      
+      // Add spinning class for visual effects
+      document.body.classList.add('spinning');
       
       // Start looping metal swoosh sound
       startMetalSwooshLoop();
@@ -1643,7 +1790,7 @@
         document.getElementById('middleRing').style.transformOrigin = '180px 180px';
 
         // Gradually slow down slightly for drama
-        if (middleSpinSpeed > 8) {
+        if (middleSpinSpeed > 7) {
           middleSpinSpeed *= 0.998;
         }
       }, 16);
@@ -1665,6 +1812,9 @@
     function catchMiddleRing() {
       clearInterval(middleSpinInterval);
       middleSpinning = false;
+      
+      // Remove spinning class
+      document.body.classList.remove('spinning');
       
       // Stop the metal swoosh sound
       if (metalSwooshSound) {
