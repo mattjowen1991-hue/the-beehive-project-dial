@@ -1087,35 +1087,32 @@
     // ============== AUDIO ==============
     let audioCtx = null;
     
-    // Dropbox base URL (converted from share link)
-    const DB_BASE = 'https://dl.dropboxusercontent.com/scl/fo/2p0wg4br8dba7mo0p5md1/AF64owSbqrv7XMvHyyw8CCg';
-    const DB_PARAMS = 'rlkey=fh5z6t1zns65xpp54y1azc3ke&dl=1';
-    
-    // Sound file URLs
+    // GitHub Pages URLs
+    const AUDIO_BASE = 'https://mattjowen1991-hue.github.io/the-beehive-project-dial/assets';
     const SOUNDS = {
-      rockSliding: `${DB_BASE}/Rock%20Sliding.mp3?${DB_PARAMS}`,
-      metalSwoosh: `${DB_BASE}/Metal%20Swoosh.mp3?${DB_PARAMS}`,
-      lock: `${DB_BASE}/Lock.mp3?${DB_PARAMS}`,
-      staticDread: `${DB_BASE}/Static.mp3?${DB_PARAMS}`,
-      angelsOthers: `${DB_BASE}/Angels.mp3?${DB_PARAMS}`,
+      rockSliding: `${AUDIO_BASE}/Rock%20Sliding.mp3`,
+      metalSwoosh: `${AUDIO_BASE}/Metal%20Swoosh.mp3`,
+      lock: `${AUDIO_BASE}/lock.wav`,
+      staticDread: `${AUDIO_BASE}/Static.mp3`,
+      angelsOthers: `${AUDIO_BASE}/Angles.mp3`,
       clicks: [
-        `${DB_BASE}/Click%201.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Click%202.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Click%203.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Click%204.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Click%205.mp3?${DB_PARAMS}`
+        `${AUDIO_BASE}/Click%201.mp3`,
+        `${AUDIO_BASE}/Click%202.mp3`,
+        `${AUDIO_BASE}/Click%203.mp3`,
+        `${AUDIO_BASE}/Click%204.mp3`,
+        `${AUDIO_BASE}/Click%205.mp3`
       ],
       boneCracks: [
-        `${DB_BASE}/Bone%20Crack%201.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Bone%20Crack%202.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Bone%20Crack%203.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Bone%20Crack%204.mp3?${DB_PARAMS}`
+        `${AUDIO_BASE}/Bone%20Crack%202.mp3`,
+        `${AUDIO_BASE}/Bone%20Crack%203.mp3`,
+        `${AUDIO_BASE}/Bone%20Crack%204.mp3`,
+        `${AUDIO_BASE}/Bone_Crack_1.mp3`
       ],
       chimes: [
-        `${DB_BASE}/Chime%201.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Chime%202.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Chime%203.mp3?${DB_PARAMS}`,
-        `${DB_BASE}/Chime%204.mp3?${DB_PARAMS}`
+        `${AUDIO_BASE}/Chime%201.mp3`,
+        `${AUDIO_BASE}/Chime%202.mp3`,
+        `${AUDIO_BASE}/Chime%203.mp3`,
+        `${AUDIO_BASE}/Chime%204.mp3`
       ]
     };
 
