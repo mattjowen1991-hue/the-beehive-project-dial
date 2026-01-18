@@ -1196,6 +1196,10 @@
     }
 
     // ============== DOM ELEMENTS ==============
+    
+    // Track looping/stoppable sounds
+    let metalSwooshSound = null;
+    let finalRitualSound = null;
 
     // ============== UI UPDATES ==============
     function updateUI() {
@@ -1467,7 +1471,10 @@
     function startMiddleSpin() {
       middleSpinning = true;
       middleSpinSpeed = 15; // degrees per frame
-      playMetalSpin();
+      
+      // Start looping metal swoosh sound
+      startMetalSwooshLoop();
+      
       addLog('The frequency ring spins freely — almost frictionless.', 'system');
       updateUI();
 
@@ -1482,10 +1489,30 @@
         }
       }, 16);
     }
+    
+    function startMetalSwooshLoop() {
+      if (!middleSpinning) return; // Don't start if spinning has stopped
+      
+      metalSwooshSound = playSound('metalSwoosh', 0.7);
+      if (metalSwooshSound) {
+        metalSwooshSound.addEventListener('ended', () => {
+          if (middleSpinning) {
+            startMetalSwooshLoop(); // Restart when it ends, if still spinning
+          }
+        });
+      }
+    }
 
     function catchMiddleRing() {
       clearInterval(middleSpinInterval);
       middleSpinning = false;
+      
+      // Stop the metal swoosh sound
+      if (metalSwooshSound) {
+        metalSwooshSound.pause();
+        metalSwooshSound.currentTime = 0;
+        metalSwooshSound = null;
+      }
 
       // Check alignment - target is at 180° for dread (bottom), 0° for ascended (top)
       const targetAngle = mode === 'dread' ? 180 : 0;
@@ -1586,8 +1613,8 @@
       addLog('THE LOCK IS COMPLETE', mode === 'dread' ? 'danger' : 'holy');
 
       setTimeout(() => {
-        // Play the final ritual sound (Static for Dread, Angels for Others)
-        playFinalRitual();
+        // Play the final ritual sound (Static for Dread, Angels for Others) and store reference
+        startFinalRitualLoop();
         
         if (mode === 'dread') {
           showCall('W̷E̸ ̵H̷A̶V̵E̷ ̸W̶A̷I̵T̴E̸D̵.̷ ̶W̵E̶ ̴H̸A̶V̵E̶ ̷H̸U̴N̵G̶E̷R̸E̶D̵.̷ ̶Y̴O̸U̵R̶ ̷F̶L̷E̸S̵H̵ ̴I̸S̷ ̵O̴U̶R̷ ̴V̷E̸S̵S̵E̴L̵ ̶N̸O̷W̵.̸ ̷W̸E̴ ̵S̵E̷E̵ ̵T̸H̷R̶O̷U̸G̵H̶ ̸Y̴O̷U̶R̷ ̵E̷Y̸E̵S̷.̴ ̶W̷E̷ ̵S̶P̸E̸A̶K̷ ̸W̵I̷T̶H̴ ̶Y̵O̵U̷R̵ ̵T̴O̵N̵G̵U̴E̸.̷');
@@ -1595,6 +1622,20 @@
           showCall('You are not alone. You have never been alone. Before the first star ignited, we sang. When the last light fades, we will still be singing. You are a note in an infinite symphony. Welcome home, beloved child of light. The Song remembers you.');
         }
       }, 1000);
+    }
+    
+    let finalRitualPlaying = false;
+    
+    function startFinalRitualLoop() {
+      finalRitualPlaying = true;
+      finalRitualSound = playFinalRitual();
+      if (finalRitualSound) {
+        finalRitualSound.addEventListener('ended', () => {
+          if (finalRitualPlaying) {
+            startFinalRitualLoop(); // Loop until severed
+          }
+        });
+      }
     }
 
     function showCall(message) {
@@ -1604,6 +1645,14 @@
     }
 
     function dismissCall() {
+      // Stop the final ritual sound
+      finalRitualPlaying = false;
+      if (finalRitualSound) {
+        finalRitualSound.pause();
+        finalRitualSound.currentTime = 0;
+        finalRitualSound = null;
+      }
+      
       document.getElementById('callOverlay').className = 'call-overlay';
       addLog('The connection severs. Silence returns.', 'system');
       addLog('You are forever changed.', 'warning');
