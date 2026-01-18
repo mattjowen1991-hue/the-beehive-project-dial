@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Trinary Dial — Mors Orbis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void-black: #050507;
+      --shadow: #0a0a0f;
+      --static: #1a1a22;
+      --bone: #c8c4b8;
+      --dread-red: #8b0000;
+      --dread-glow: #ff2222;
+      --blood: #4a0000;
+      --ascended-gold: #c9a227;
+      --ascended-glow: #ffd700;
+      --ascended-white: #fffff0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--void-black);
+      color: var(--bone);
+      font-family: 'Crimson Text', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 1s ease, filter 0.5s ease;
+    }
+
+    body.dread-active {
+      background: #030304;
+    }
+
+    body.ascended-active {
+      background: #08080a;
+    }
+
+    body.calling {
+      animation: screen-shake 0.1s infinite;
+    }
+
+    @keyframes screen-shake {
+      0%, 100% { transform: translate(0); }
+      25% { transform: translate(-1px, 1px); }
+      50% { transform: translate(1px, -1px); }
+      75% { transform: translate(-1px, -1px); }
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Vignette effect */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none;
+      z-index: 999;
+      transition: background 1s ease;
+    }
+
+    body.dread-active::after {
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(80,0,0,0.1) 40%, rgba(0,0,0,0.9) 100%);
+    }
+
+    body.ascended-active::after {
+      background: radial-gradient(ellipse at center, rgba(255,215,0,0.05) 0%, transparent 40%, rgba(0,0,0,0.7) 100%);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 500px 1fr;
+      gap: 30px;
+      min-height: 100vh;
+      align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+      }
+    }
+
+    /* Header */
+    header {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 20px 0 30px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      color: var(--bone);
+      transition: color 1s ease, text-shadow 1s ease;
+    }
+
+    body.dread-active h1 {
+      color: var(--dread-glow);
+      text-shadow: 0 0 30px var(--dread-red);
+    }
+
+    body.ascended-active h1 {
+      color: var(--ascended-glow);
+      text-shadow: 0 0 30px var(--ascended-gold);
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: var(--static);
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Control Panel */
+    .control-panel {
+      background: linear-gradient(180deg, var(--shadow) 0%, var(--void-black) 100%);
+      border: 1px solid var(--static);
+      border-radius: 4px;
+      padding: 25px;
+    }
+
+    .panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--static);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--static);
+    }
+
+    /* Mode Selection */
+    .mode-selection {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .mode-btn {
+      padding: 15px 20px;
+      border: 1px solid var(--static);
+      background: transparent;
+      color: var(--bone);
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      transition: left 0.4s ease;
+      z-index: -1;
+    }
+
+    .mode-btn.dread::before {
+      background: linear-gradient(90deg, var(--blood), transparent);
+    }
+
+    .mode-btn.ascended::before {
+      background: linear-gradient(90deg, rgba(201, 162, 39, 0.2), transparent);
+    }
+
+    .mode-btn:hover::before,
+    .mode-btn.active::before {
+      left: 0;
+    }
+
+    .mode-btn.dread.active {
+      border-color: var(--dread-red);
+      color: var(--dread-glow);
+    }
+
+    .mode-btn.ascended.active {
+      border-color: var(--ascended-gold);
+      color: var(--ascended-glow);
+    }
+
+    .mode-btn span {
+      display: block;
+      font-family: 'Crimson Text', serif;
+      font-size: 0.75rem;
+      font-style: italic;
+      margin-top: 5px;
+      opacity: 0.6;
+    }
+
+    /* Status Display */
+    .status-section {
+      margin-bottom: 20px;
+    }
+
+    .status-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--static);
+      margin-bottom: 8px;
+    }
+
+    .status-value {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border-left: 2px solid var(--static);
+      transition: all 0.3s ease;
+    }
+
+    .status-value.danger {
+      border-color: var(--dread-red);
+      color: var(--dread-glow);
+    }
+
+    .status-value.holy {
+      border-color: var(--ascended-gold);
+      color: var(--ascended-glow);
+    }
+
+    /* Physical Toll */
+    .toll-meter {
+      height: 8px;
+      background: var(--void-black);
+      border: 1px solid var(--static);
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toll-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s ease, background 0.3s ease;
+    }
+
+    body.dread-active .toll-fill {
+      background: linear-gradient(90deg, var(--dread-red), var(--dread-glow));
+    }
+
+    body.ascended-active .toll-fill {
+      background: linear-gradient(90deg, var(--ascended-gold), var(--ascended-glow));
+    }
+
+    /* Instructions */
+    .instructions {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--static);
+    }
+
+    .instructions p {
+      margin-bottom: 10px;
+    }
+
+    .instructions strong {
+      color: var(--bone);
+    }
+
+    .instructions.dread-instructions strong {
+      color: var(--dread-glow);
+    }
+
+    .instructions.ascended-instructions strong {
+      color: var(--ascended-glow);
+    }
+
+    /* The Dial Container */
+    .dial-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .dial-wrapper {
+      position: relative;
+      width: 460px;
+      height: 460px;
+    }
+
+    /* The Dial SVG */
+    .dial-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
+      transition: filter 1s ease;
+    }
+
+    body.dread-active .dial-svg {
+      filter: drop-shadow(0 0 30px rgba(139, 0, 0, 0.4));
+    }
+
+    body.ascended-active .dial-svg {
+      filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.3));
+    }
+
+    /* Ring styles */
+    .ring {
+      fill: none;
+      transition: all 0.3s ease;
+    }
+
+    .outer-ring-bg {
+      fill: url(#outerRingGradient);
+      stroke: #1a1a1a;
+      stroke-width: 2;
+    }
+
+    .middle-ring-bg {
+      fill: url(#middleRingGradient);
+      stroke: #2a2a2a;
+      stroke-width: 1;
+    }
+
+    .inner-ring-bg {
+      fill: url(#innerRingGradient);
+      stroke: #1a1a1a;
+      stroke-width: 1;
+    }
+
+    /* Glyphs on rings */
+    .glyph {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      fill: var(--static);
+      transition: fill 0.3s ease, filter 0.3s ease;
+      cursor: default;
+    }
+
+    .glyph.active {
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    body.dread-active .glyph.active {
+      fill: var(--dread-glow);
+    }
+
+    body.ascended-active .glyph.active {
+      fill: var(--ascended-glow);
+    }
+
+    /* Blood channels */
+    .blood-channel {
+      stroke: var(--static);
+      stroke-width: 1;
+      fill: none;
+      transition: stroke 1s ease;
+    }
+
+    body.dread-active .blood-channel.filled {
+      stroke: var(--dread-red);
+      filter: drop-shadow(0 0 3px var(--dread-red));
+      animation: blood-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes blood-pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* Center eye */
+    .center-eye {
+      transition: all 0.5s ease;
+    }
+
+    .center-eye-outer {
+      fill: var(--void-black);
+      stroke: var(--static);
+      stroke-width: 2;
+    }
+
+    .center-eye-inner {
+      fill: var(--shadow);
+      transition: fill 0.5s ease;
+    }
+
+    body.dread-active .center-eye-inner {
+      fill: var(--dread-red);
+      animation: eye-pulse-dread 1s ease-in-out infinite;
+    }
+
+    body.ascended-active .center-eye-inner {
+      fill: var(--ascended-gold);
+      animation: eye-pulse-ascended 2s ease-in-out infinite;
+    }
+
+    @keyframes eye-pulse-dread {
+      0%, 100% { filter: drop-shadow(0 0 5px var(--dread-red)); }
+      50% { filter: drop-shadow(0 0 20px var(--dread-glow)); }
+    }
+
+    @keyframes eye-pulse-ascended {
+      0%, 100% { filter: drop-shadow(0 0 5px var(--ascended-gold)); }
+      50% { filter: drop-shadow(0 0 25px var(--ascended-glow)); }
+    }
+
+    /* Interactive ring controls */
+    .ring-control {
+      position: absolute;
+      border-radius: 50%;
+      cursor: grab;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .ring-control:active {
+      cursor: grabbing;
+    }
+
+    .ring-control.outer {
+      width: 460px;
+      height: 460px;
+      top: 0;
+      left: 0;
+    }
+
+    .ring-control.middle {
+      width: 340px;
+      height: 340px;
+      top: 60px;
+      left: 60px;
+    }
+
+    .ring-control.inner {
+      width: 200px;
+      height: 200px;
+      top: 130px;
+      left: 130px;
+      cursor: pointer;
+    }
+
+    /* Press indicator for inner ring */
+    .press-indicators {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .press-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--static);
+      transition: all 0.3s ease;
+    }
+
+    .press-dot.filled {
+      transform: scale(1.2);
+    }
+
+    body.dread-active .press-dot.filled {
+      background: var(--dread-glow);
+      box-shadow: 0 0 10px var(--dread-red);
+    }
+
+    body.ascended-active .press-dot.filled {
+      background: var(--ascended-glow);
+      box-shadow: 0 0 10px var(--ascended-gold);
+    }
+
+    /* Feedback overlay */
+    .feedback-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+
+    .feedback-overlay.snap {
+      opacity: 1;
+    }
+
+    .feedback-overlay.dread-snap {
+      background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.3) 0%, transparent 70%);
+    }
+
+    .feedback-overlay.ascended-snap {
+      background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+    }
+
+    /* Message Log */
+    .message-log {
+      background: linear-gradient(180deg, var(--shadow) 0%, var(--void-black) 100%);
+      border: 1px solid var(--static);
+      border-radius: 4px;
+      padding: 25px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      animation: fade-in 0.3s ease;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-entry.system {
+      color: var(--static);
+      font-style: italic;
+    }
+
+    .log-entry.dread {
+      color: var(--dread-glow);
+    }
+
+    .log-entry.ascended {
+      color: var(--ascended-glow);
+    }
+
+    .log-entry.warning {
+      color: #ff6b35;
+    }
+
+    .log-entry.danger {
+      color: var(--dread-glow);
+      font-weight: 600;
+      text-shadow: 0 0 10px var(--dread-red);
+    }
+
+    .log-entry.holy {
+      color: var(--ascended-glow);
+      text-shadow: 0 0 10px var(--ascended-gold);
+    }
+
+    /* The Call overlay */
+    .call-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .call-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .call-overlay.dread {
+      background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.98) 100%);
+    }
+
+    .call-overlay.ascended {
+      background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.15) 0%, rgba(255, 255, 240, 0.95) 100%);
+    }
+
+    .call-message {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      text-align: center;
+      padding: 40px;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+    .call-overlay.dread .call-message {
+      color: var(--dread-glow);
+      text-shadow: 0 0 30px var(--dread-red);
+      animation: dread-text 0.5s ease-in-out infinite;
+    }
+
+    .call-overlay.ascended .call-message {
+      color: var(--ascended-gold);
+      text-shadow: 0 0 20px var(--ascended-glow);
+    }
+
+    @keyframes dread-text {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .dismiss-call {
+      position: absolute;
+      bottom: 50px;
+      padding: 15px 40px;
+      border: 1px solid currentColor;
+      background: transparent;
+      color: inherit;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dismiss-call:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Reset button */
+    .reset-btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      border: 1px solid var(--static);
+      background: transparent;
+      color: var(--bone);
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .reset-btn:hover {
+      background: var(--shadow);
+      border-color: var(--bone);
+    }
+
+    /* Temperature indicator */
+    .temp-indicator {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--static);
+      transition: color 0.5s ease;
+    }
+
+    body.dread-active .temp-indicator {
+      color: var(--dread-glow);
+    }
+
+    body.ascended-active .temp-indicator {
+      color: var(--ascended-gold);
+    }
+
+    /* Scrollbar */
+    .message-log::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .message-log::-webkit-scrollbar-track {
+      background: var(--void-black);
+    }
+
+    .message-log::-webkit-scrollbar-thumb {
+      background: var(--static);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="feedback-overlay" id="feedbackOverlay"></div>
+  
+  <div class="call-overlay" id="callOverlay">
+    <div class="call-message" id="callMessage"></div>
+    <button class="dismiss-call" onclick="dismissCall()">End Connection</button>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>The Trinary Dial</h1>
+      <p class="subtitle">Mors Orbis — "The Death Disk"</p>
+    </header>
+
+    <!-- Left Panel: Controls -->
+    <div class="control-panel">
+      <div class="panel-title">Ritual Selection</div>
+      
+      <div class="mode-selection">
+        <button class="mode-btn dread" onclick="setMode('dread')">
+          ⛧ Call The Dread
+          <span>Widdershins • Blood Cost • Chaos</span>
+        </button>
+        <button class="mode-btn ascended" onclick="setMode('ascended')">
+          ✦ Call The Others
+          <span>Deosil • Surrender • Order</span>
+        </button>
+      </div>
+
+      <div class="status-section">
+        <div class="status-label">Current Phase</div>
+        <div class="status-value" id="phaseStatus">Select a ritual to begin</div>
+      </div>
+
+      <div class="status-section">
+        <div class="status-label">Ring Alignment</div>
+        <div class="status-value" id="alignmentStatus">—</div>
+      </div>
+
+      <div class="status-section">
+        <div class="status-label">Physical Toll</div>
+        <div class="toll-meter">
+          <div class="toll-fill" id="tollFill"></div>
+        </div>
+      </div>
+
+      <div class="instructions" id="instructions">
+        <p>The Trinary Dial awaits activation.</p>
+        <p>Select a ritual mode to receive instructions.</p>
+      </div>
+
+      <button class="reset-btn" onclick="resetDial()">↺ Reset Dial</button>
+    </div>
+
+    <!-- Center: The Dial -->
+    <div class="dial-container">
+      <div class="dial-wrapper">
+        <svg class="dial-svg" viewBox="0 0 460 460" id="dialSvg">
+          <defs>
+            <!-- Gradients -->
+            <radialGradient id="outerRingGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1a1a1a"/>
+              <stop offset="100%" stop-color="#0a0a0a"/>
+            </radialGradient>
+            <radialGradient id="middleRingGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#252525"/>
+              <stop offset="100%" stop-color="#151515"/>
+            </radialGradient>
+            <radialGradient id="innerRingGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1f1f1f"/>
+              <stop offset="100%" stop-color="#0f0f0f"/>
+            </radialGradient>
+
+            <!-- Filters -->
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Outer Ring (Matter) -->
+          <g id="outerRing" transform="rotate(0, 230, 230)">
+            <circle class="outer-ring-bg" cx="230" cy="230" r="220" stroke-width="50"/>
+            
+            <!-- Blood channels -->
+            <g class="blood-channels">
+              <path class="blood-channel" id="bloodChannel1" d="M 230 30 Q 240 50 230 70"/>
+              <path class="blood-channel" id="bloodChannel2" d="M 400 130 Q 380 140 370 160"/>
+              <path class="blood-channel" id="bloodChannel3" d="M 430 230 Q 410 240 400 230"/>
+              <path class="blood-channel" id="bloodChannel4" d="M 400 330 Q 380 320 370 300"/>
+              <path class="blood-channel" id="bloodChannel5" d="M 230 430 Q 220 410 230 390"/>
+              <path class="blood-channel" id="bloodChannel6" d="M 60 330 Q 80 320 90 300"/>
+              <path class="blood-channel" id="bloodChannel7" d="M 30 230 Q 50 220 60 230"/>
+              <path class="blood-channel" id="bloodChannel8" d="M 60 130 Q 80 140 90 160"/>
+            </g>
+
+            <!-- Outer ring glyphs (Matter Group) -->
+            <g class="outer-glyphs">
+              <text class="glyph" id="glyph-A" x="230" y="45" text-anchor="middle">A</text>
+              <text class="glyph" id="glyph-B" x="355" y="105" text-anchor="middle">B</text>
+              <text class="glyph" id="glyph-F" x="415" y="230" text-anchor="middle">F</text>
+              <text class="glyph" id="glyph-G" x="355" y="355" text-anchor="middle">G</text>
+              <text class="glyph" id="glyph-H" x="230" y="415" text-anchor="middle">H</text>
+              <text class="glyph" id="glyph-I" x="105" y="355" text-anchor="middle">I</text>
+              <text class="glyph" id="glyph-J" x="45" y="230" text-anchor="middle">J</text>
+              <text class="glyph" id="glyph-K" x="105" y="105" text-anchor="middle">K</text>
+              <text class="glyph" id="glyph-L" x="180" y="65" text-anchor="middle">L</text>
+            </g>
+          </g>
+
+          <!-- Middle Ring (Energy) -->
+          <g id="middleRing" transform="rotate(0, 230, 230)">
+            <circle class="middle-ring-bg" cx="230" cy="230" r="160" stroke-width="40"/>
+            
+            <!-- Middle ring glyphs (Energy Group) -->
+            <g class="middle-glyphs">
+              <text class="glyph" id="glyph-C" x="230" y="85" text-anchor="middle">C</text>
+              <text class="glyph" id="glyph-E" x="325" y="130" text-anchor="middle">E</text>
+              <text class="glyph" id="glyph-M" x="365" y="230" text-anchor="middle">M</text>
+              <text class="glyph" id="glyph-N" x="325" y="330" text-anchor="middle">N</text>
+              <text class="glyph" id="glyph-O" x="230" y="375" text-anchor="middle">O</text>
+              <text class="glyph" id="glyph-P" x="135" y="330" text-anchor="middle">P</text>
+              <text class="glyph" id="glyph-Q" x="95" y="230" text-anchor="middle">Q</text>
+              <text class="glyph" id="glyph-R" x="135" y="130" text-anchor="middle">R</text>
+              <text class="glyph" id="glyph-S" x="180" y="90" text-anchor="middle">S</text>
+            </g>
+          </g>
+
+          <!-- Inner Ring (Void) -->
+          <g id="innerRing" transform="rotate(0, 230, 230)">
+            <circle class="inner-ring-bg" cx="230" cy="230" r="90" stroke-width="35"/>
+            
+            <!-- Inner ring glyphs (Void Group) -->
+            <g class="inner-glyphs">
+              <text class="glyph" id="glyph-D" x="230" y="155" text-anchor="middle" font-size="11">D</text>
+              <text class="glyph" id="glyph-T" x="280" y="180" text-anchor="middle" font-size="11">T</text>
+              <text class="glyph" id="glyph-U" x="305" y="230" text-anchor="middle" font-size="11">U</text>
+              <text class="glyph" id="glyph-V" x="280" y="280" text-anchor="middle" font-size="11">V</text>
+              <text class="glyph" id="glyph-W" x="230" y="305" text-anchor="middle" font-size="11">Ω</text>
+              <text class="glyph" id="glyph-X" x="180" y="280" text-anchor="middle" font-size="11">X</text>
+              <text class="glyph" id="glyph-Y" x="155" y="230" text-anchor="middle" font-size="11">Y</text>
+              <text class="glyph" id="glyph-Z" x="180" y="180" text-anchor="middle" font-size="11">Z</text>
+              <text class="glyph" id="glyph-Omega" x="205" y="155" text-anchor="middle" font-size="11">W</text>
+            </g>
+          </g>
+
+          <!-- Center Eye -->
+          <g class="center-eye">
+            <circle class="center-eye-outer" cx="230" cy="230" r="45"/>
+            <circle class="center-eye-inner" cx="230" cy="230" r="20"/>
+          </g>
+
+          <!-- Alignment marker (top) -->
+          <polygon points="230,5 225,20 235,20" fill="#444" id="alignmentMarker"/>
+        </svg>
+
+        <!-- Interactive controls (invisible overlays for drag) -->
+        <div class="ring-control outer" id="outerControl"></div>
+        <div class="ring-control middle" id="middleControl"></div>
+        <div class="ring-control inner" id="innerControl"></div>
+
+        <!-- Press indicators -->
+        <div class="press-indicators" id="pressIndicators">
+          <div class="press-dot" id="press1"></div>
+          <div class="press-dot" id="press2"></div>
+          <div class="press-dot" id="press3"></div>
+          <div class="press-dot" id="press4"></div>
+          <div class="press-dot" id="press5"></div>
+          <div class="press-dot" id="press6"></div>
+          <div class="press-dot" id="press7"></div>
+          <div class="press-dot" id="press8"></div>
+          <div class="press-dot" id="press9"></div>
+        </div>
+
+        <div class="temp-indicator" id="tempIndicator">Temperature: Absolute Zero</div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Message Log -->
+    <div class="message-log" id="messageLog">
+      <div class="panel-title">Manifestation Log</div>
+      <div id="logEntries">
+        <div class="log-entry system">The dial lies dormant. Ancient. Waiting.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let mode = null; // 'dread' or 'ascended'
+    let phase = 0; // 0: inactive, 1: prime, 2: tune, 3: pierce, 4: locked
+    let outerRotation = 0;
+    let middleRotation = 0;
+    let innerRotation = 0;
+    let innerScale = 1;
+    let pressCount = 0;
+    let toll = 0;
+    let bloodFilled = 0;
+    let isLocked = false;
+
+    // Audio context for sonic feedback
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSnap(type) {
+      initAudio();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      if (type === 'dread') {
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(80, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      } else {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+      }
+
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function playPress(type, count) {
+      initAudio();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      if (type === 'dread') {
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(50 + (count * 10), audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      } else {
+        oscillator.type = 'triangle';
+        oscillator.frequency.setValueAtTime(400 + (count * 50), audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+      }
+
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.4);
+    }
+
+    // Mode selection
+    function setMode(newMode) {
+      mode = newMode;
+      phase = 1;
+      toll = 0;
+      pressCount = 0;
+      bloodFilled = 0;
+      isLocked = false;
+
+      document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.mode-btn.${mode}`).classList.add('active');
+
+      document.body.classList.remove('dread-active', 'ascended-active', 'calling');
+      document.body.classList.add(`${mode}-active`);
+
+      updatePhaseStatus();
+      updateInstructions();
+      updateToll();
+      clearPressIndicators();
+
+      if (mode === 'dread') {
+        addLog('The air grows cold. Shadows lengthen. The dial hungers.', 'dread');
+        addLog('Phase 1: THE PRIME — Grip the Outer Ring with your LEFT hand. Turn WIDDERSHINS (counter-clockwise) three times.', 'system');
+      } else {
+        addLog('The air becomes crisp, charged with ozone. Colors sharpen.', 'ascended');
+        addLog('Phase 1: THE PRIME — Grip the Outer Ring with your RIGHT hand. Turn DEOSIL (clockwise) three times.', 'system');
+      }
+    }
+
+    function updatePhaseStatus() {
+      const phases = ['Inactive', 'The Prime', 'The Tune', 'The Pierce', 'THE LOCK'];
+      const statusEl = document.getElementById('phaseStatus');
+      statusEl.textContent = phases[phase];
+      statusEl.className = 'status-value';
+      if (phase >= 3 && mode === 'dread') statusEl.classList.add('danger');
+      if (phase >= 3 && mode === 'ascended') statusEl.classList.add('holy');
+    }
+
+    function updateInstructions() {
+      const instructionsEl = document.getElementById('instructions');
+      instructionsEl.className = 'instructions';
+      
+      if (!mode) {
+        instructionsEl.innerHTML = '<p>The Trinary Dial awaits activation.</p><p>Select a ritual mode to receive instructions.</p>';
+        return;
+      }
+
+      instructionsEl.classList.add(`${mode}-instructions`);
+
+      if (mode === 'dread') {
+        switch(phase) {
+          case 1:
+            instructionsEl.innerHTML = '<p><strong>THE PRIME:</strong> Drag the outer ring counter-clockwise. The blood channels will fill as you turn.</p><p>Complete three full rotations widdershins.</p>';
+            break;
+          case 2:
+            instructionsEl.innerHTML = '<p><strong>THE TUNE:</strong> Spin the middle ring and stop on the <strong>6th Chaos Glyph (P)</strong>.</p><p>Warning: Wrong alignment causes spontaneous combustion.</p>';
+            break;
+          case 3:
+            instructionsEl.innerHTML = '<p><strong>THE PIERCE:</strong> Press the inner ring 9 times in sequence.</p><p>Presses 1-3: Decay/Death<br>Presses 4-6: Chaos/Disease<br>Presses 7-9: Void/Nothingness</p>';
+            break;
+          case 4:
+            instructionsEl.innerHTML = '<p><strong>CONNECTION ESTABLISHED.</strong></p><p>The Dread speaks through you now.</p>';
+            break;
+        }
+      } else {
+        switch(phase) {
+          case 1:
+            instructionsEl.innerHTML = '<p><strong>THE PRIME:</strong> Drag the outer ring clockwise. Enter a state of absolute surrender.</p><p>Complete three full rotations deosil.</p>';
+            break;
+          case 2:
+            instructionsEl.innerHTML = '<p><strong>THE TUNE:</strong> Spin the middle ring and stop on the <strong>9th Order Glyph (S)</strong>.</p><p>Warning: Fear or ego causes "The Wipe" — total personality erasure.</p>';
+            break;
+          case 3:
+            instructionsEl.innerHTML = '<p><strong>THE PIERCE:</strong> Press the inner ring 9 times in sequence.</p><p>Presses 1-3: Beginning/Birth<br>Presses 4-6: Balance/Body<br>Presses 7-9: Spirit/Transcendence</p>';
+            break;
+          case 4:
+            instructionsEl.innerHTML = '<p><strong>CONNECTION ESTABLISHED.</strong></p><p>The Others sing The Word into your consciousness.</p>';
+            break;
+        }
+      }
+    }
+
+    function updateToll() {
+      document.getElementById('tollFill').style.width = `${toll}%`;
+    }
+
+    function addLog(message, type = 'system') {
+      const logEntries = document.getElementById('logEntries');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = message;
+      logEntries.appendChild(entry);
+      logEntries.scrollTop = logEntries.scrollHeight;
+    }
+
+    function showFeedback(type) {
+      const overlay = document.getElementById('feedbackOverlay');
+      overlay.className = `feedback-overlay snap ${type}-snap`;
+      setTimeout(() => {
+        overlay.className = 'feedback-overlay';
+      }, 100);
+    }
+
+    function clearPressIndicators() {
+      for (let i = 1; i <= 9; i++) {
+        document.getElementById(`press${i}`).classList.remove('filled');
+      }
+    }
+
+    function updateTemperature() {
+      const tempEl = document.getElementById('tempIndicator');
+      if (!mode) {
+        tempEl.textContent = 'Temperature: Absolute Zero';
+      } else if (mode === 'dread') {
+        const temps = ['Absolute Zero', 'Freezing', 'Cold', 'Warming', 'Hot', 'Scalding', 'MOLTEN'];
+        const idx = Math.min(Math.floor(toll / 15), 6);
+        tempEl.textContent = `Temperature: ${temps[idx]}`;
+      } else {
+        const temps = ['Absolute Zero', 'Cool', 'Warm', 'Pleasant', 'Radiant', 'Brilliant', 'TRANSCENDENT'];
+        const idx = Math.min(Math.floor(toll / 15), 6);
+        tempEl.textContent = `Temperature: ${temps[idx]}`;
+      }
+    }
+
+    // Ring rotation handling
+    let isDragging = false;
+    let activeRing = null;
+    let startAngle = 0;
+    let rotationCount = 0;
+    let lastAngle = 0;
+
+    function getAngle(element, event) {
+      const rect = element.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+      const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+      return Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+    }
+
+    function handleDragStart(ring, event) {
+      if (isLocked) return;
+      if ((ring === 'outer' && phase !== 1) || 
+          (ring === 'middle' && phase !== 2)) return;
+      
+      isDragging = true;
+      activeRing = ring;
+      startAngle = getAngle(event.target, event);
+      
+      if (ring === 'outer') lastAngle = outerRotation;
+      else if (ring === 'middle') lastAngle = middleRotation;
+      
+      event.preventDefault();
+    }
+
+    function handleDragMove(event) {
+      if (!isDragging || !activeRing) return;
+      
+      const control = document.getElementById(`${activeRing}Control`);
+      const currentAngle = getAngle(control, event);
+      let delta = currentAngle - startAngle;
+      
+      // Normalize delta
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+
+      if (activeRing === 'outer') {
+        outerRotation = lastAngle + delta;
+        document.getElementById('outerRing').setAttribute('transform', `rotate(${outerRotation}, 230, 230)`);
+        
+        // Track rotations for phase 1
+        if (phase === 1) {
+          const fullRotations = Math.abs(outerRotation) / 360;
+          
+          // Check direction
+          const correctDirection = (mode === 'dread' && outerRotation < 0) || 
+                                   (mode === 'ascended' && outerRotation > 0);
+          
+          if (correctDirection) {
+            // Fill blood channels progressively
+            const channelsToFill = Math.min(Math.floor(fullRotations * 3), 8);
+            for (let i = 1; i <= channelsToFill; i++) {
+              document.getElementById(`bloodChannel${i}`).classList.add('filled');
+            }
+            bloodFilled = channelsToFill;
+            
+            // Update toll
+            toll = Math.min(fullRotations * 10, 30);
+            updateToll();
+            updateTemperature();
+            
+            // Check for completion
+            if (fullRotations >= 3 && bloodFilled >= 8) {
+              playSnap(mode);
+              showFeedback(mode);
+              phase = 2;
+              updatePhaseStatus();
+              updateInstructions();
+              
+              if (mode === 'dread') {
+                addLog('The blood flows. The channels fill with your sacrifice. The dial AWAKENS.', 'dread');
+                addLog('SONIC SNAP: A sound like crunching bone fills your teeth.', 'warning');
+              } else {
+                addLog('The dial responds to your surrender. Light begins to gather.', 'ascended');
+                addLog('SONIC SNAP: A perfect crystal chime resonates through your being.', 'holy');
+              }
+              addLog('Phase 2: THE TUNE — Spin the middle ring.', 'system');
+            }
+          }
+        }
+      } else if (activeRing === 'middle') {
+        middleRotation = lastAngle + delta;
+        document.getElementById('middleRing').setAttribute('transform', `rotate(${middleRotation}, 230, 230)`);
+        
+        // Update alignment status
+        const normalizedRotation = ((middleRotation % 360) + 360) % 360;
+        updateAlignmentStatus(normalizedRotation);
+      }
+      
+      event.preventDefault();
+    }
+
+    function handleDragEnd(event) {
+      if (!isDragging) return;
+      
+      if (activeRing === 'middle' && phase === 2) {
+        // Check if aligned correctly
+        const normalizedRotation = ((middleRotation % 360) + 360) % 360;
+        
+        // P glyph (6th chaos) is at ~200 degrees, S glyph (9th order) is at ~80 degrees
+        const targetDread = 200;
+        const targetAscended = 80;
+        const tolerance = 15;
+        
+        const alignedDread = Math.abs(normalizedRotation - targetDread) < tolerance;
+        const alignedAscended = Math.abs(normalizedRotation - targetAscended) < tolerance;
+        
+        if ((mode === 'dread' && alignedDread) || (mode === 'ascended' && alignedAscended)) {
+          playSnap(mode);
+          showFeedback(mode);
+          phase = 3;
+          updatePhaseStatus();
+          updateInstructions();
+          
+          toll += 20;
+          updateToll();
+          updateTemperature();
+          
+          if (mode === 'dread') {
+            addLog('ALIGNMENT ACHIEVED: 6th Chaos Hexagon — The blood fuses with the mechanism.', 'dread');
+            addLog('A high-pitched SCREAM begins. It feels like something drilling into your skull.', 'warning');
+          } else {
+            addLog('ALIGNMENT ACHIEVED: 9th Order Hexagon — A harmonic choir fills your mind.', 'ascended');
+            addLog('The song runes glow. You feel the vibration in your pineal gland.', 'holy');
+          }
+          addLog('Phase 3: THE PIERCE — Press the inner ring 9 times.', 'system');
+        }
+      }
+      
+      isDragging = false;
+      activeRing = null;
+    }
+
+    function updateAlignmentStatus(rotation) {
+      const statusEl = document.getElementById('alignmentStatus');
+      
+      // Determine which glyph is at top
+      const glyphPositions = ['C', 'S', 'R', 'Q', 'P', 'O', 'N', 'M', 'E'];
+      const glyphAngle = 40; // degrees per glyph
+      const adjustedRotation = (360 - rotation + 90) % 360;
+      const glyphIndex = Math.floor(adjustedRotation / glyphAngle) % 9;
+      
+      statusEl.textContent = `Aligned: ${glyphPositions[glyphIndex]}`;
+      
+      // Highlight if correct
+      if ((mode === 'dread' && glyphPositions[glyphIndex] === 'P') ||
+          (mode === 'ascended' && glyphPositions[glyphIndex] === 'S')) {
+        statusEl.classList.add(mode === 'dread' ? 'danger' : 'holy');
+      } else {
+        statusEl.classList.remove('danger', 'holy');
+      }
+    }
+
+    // Inner ring press handling
+    function handleInnerPress() {
+      if (phase !== 3 || isLocked) return;
+      
+      pressCount++;
+      playPress(mode, pressCount);
+      document.getElementById(`press${pressCount}`).classList.add('filled');
+      
+      toll += 5;
+      updateToll();
+      updateTemperature();
+      
+      // Log the press
+      const dreadPhases = [
+        ['Decay', 'Decay', 'Death'],
+        ['Chaos', 'Chaos', 'Disease'],
+        ['Void', 'Void', 'Nothingness']
+      ];
+      const ascendedPhases = [
+        ['Beginning', 'Beginning', 'Birth'],
+        ['Balance', 'Balance', 'Body'],
+        ['Spirit', 'Spirit', 'Transcendence']
+      ];
+      
+      const phaseGroup = Math.floor((pressCount - 1) / 3);
+      const phaseIndex = (pressCount - 1) % 3;
+      
+      if (mode === 'dread') {
+        addLog(`Press ${pressCount}: ${dreadPhases[phaseGroup][phaseIndex]} — A cold, sickening pulse. Light is devoured.`, 'dread');
+        
+        if (pressCount === 3) addLog('Your hand is TRAPPED. You cannot release the dial.', 'warning');
+        if (pressCount === 6) addLog('Blood pools beneath the device. Your vision darkens at the edges.', 'warning');
+      } else {
+        addLog(`Press ${pressCount}: ${ascendedPhases[phaseGroup][phaseIndex]} — A warm pulse. The song grows louder.`, 'ascended');
+        
+        if (pressCount === 3) addLog('You feel unity. Peace. You do not WANT to release the dial.', 'holy');
+        if (pressCount === 6) addLog('Tears stream down your face. The beauty is overwhelming.', 'holy');
+      }
+      
+      // Shake effect
+      document.body.classList.add('calling');
+      setTimeout(() => document.body.classList.remove('calling'), 200);
+      
+      // Check for completion
+      if (pressCount >= 9) {
+        completeLock();
+      }
+    }
+
+    function completeLock() {
+      phase = 4;
+      isLocked = true;
+      updatePhaseStatus();
+      updateInstructions();
+      
+      toll = 100;
+      updateToll();
+      updateTemperature();
+      
+      if (mode === 'dread') {
+        addLog('THE LOCK ACHIEVED. Connection established.', 'danger');
+        addLog('The glyphs glow sickly ultraviolet. Shadows detach from reality.', 'dread');
+        addLog('̷̧̛T̸̢̧H̵̡E̷̛ ̸D̵R̸E̵A̷D̶ ̷S̴P̶E̵A̷K̸S̷.̸.̵.̷', 'danger');
+        
+        setTimeout(() => {
+          showCall('dread', 'W̷̛E̸ ̵H̸A̷V̷E̸ ̴W̷A̸I̶T̷E̵D̸.̵ ̷W̸E̵ ̵H̶A̸V̷E̶ ̵H̴U̷N̶G̵E̵R̸E̴D̶.̷ ̸Y̸O̶U̵R̶ ̸F̷L̵E̸S̴H̷ ̵I̵S̴ ̴O̵U̴R̷ ̴V̵E̵S̷S̶E̵L̸ ̶N̵O̵W̸.̴');
+        }, 1500);
+      } else {
+        addLog('THE LOCK ACHIEVED. Connection established.', 'holy');
+        addLog('The inscriptions glow white-gold. Reality becomes crystalline.', 'ascended');
+        addLog('THE OTHERS SING THE WORD...', 'holy');
+        
+        setTimeout(() => {
+          showCall('ascended', 'You are not alone. You have never been alone. The Song has always been singing. Now you can finally hear it. Welcome home, child of light.');
+        }, 1500);
+      }
+    }
+
+    function showCall(type, message) {
+      const overlay = document.getElementById('callOverlay');
+      const messageEl = document.getElementById('callMessage');
+      
+      overlay.className = `call-overlay ${type} active`;
+      messageEl.textContent = message;
+    }
+
+    function dismissCall() {
+      document.getElementById('callOverlay').className = 'call-overlay';
+      addLog('The connection severs. The dial falls silent.', 'system');
+      addLog('The ritual is complete. The cost has been paid.', 'warning');
+    }
+
+    function resetDial() {
+      mode = null;
+      phase = 0;
+      outerRotation = 0;
+      middleRotation = 0;
+      innerRotation = 0;
+      pressCount = 0;
+      toll = 0;
+      bloodFilled = 0;
+      isLocked = false;
+
+      document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+      document.body.classList.remove('dread-active', 'ascended-active', 'calling');
+
+      document.getElementById('outerRing').setAttribute('transform', 'rotate(0, 230, 230)');
+      document.getElementById('middleRing').setAttribute('transform', 'rotate(0, 230, 230)');
+      document.getElementById('innerRing').setAttribute('transform', 'rotate(0, 230, 230)');
+
+      document.querySelectorAll('.blood-channel').forEach(ch => ch.classList.remove('filled'));
+      
+      clearPressIndicators();
+      updatePhaseStatus();
+      updateInstructions();
+      updateToll();
+      updateTemperature();
+
+      document.getElementById('phaseStatus').textContent = 'Select a ritual to begin';
+      document.getElementById('alignmentStatus').textContent = '—';
+
+      document.getElementById('logEntries').innerHTML = '<div class="log-entry system">The dial lies dormant. Ancient. Waiting.</div>';
+    }
+
+    // Event listeners
+    document.getElementById('outerControl').addEventListener('mousedown', (e) => handleDragStart('outer', e));
+    document.getElementById('outerControl').addEventListener('touchstart', (e) => handleDragStart('outer', e));
+    
+    document.getElementById('middleControl').addEventListener('mousedown', (e) => handleDragStart('middle', e));
+    document.getElementById('middleControl').addEventListener('touchstart', (e) => handleDragStart('middle', e));
+    
+    document.getElementById('innerControl').addEventListener('click', handleInnerPress);
+    document.getElementById('innerControl').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleInnerPress();
+    });
+
+    document.addEventListener('mousemove', handleDragMove);
+    document.addEventListener('touchmove', handleDragMove);
+    
+    document.addEventListener('mouseup', handleDragEnd);
+    document.addEventListener('touchend', handleDragEnd);
+
+    // Initialize
+    updateTemperature();
+  </script>
+</body>
+</html>
