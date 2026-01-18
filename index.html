@@ -1350,65 +1350,105 @@
     }
 
     // ============== OUTER RING ROTATION ==============
+    let isRotating = false;
+    let rockSlidingSound = null;
+    
     function rotateOuter(direction) {
-      if (phase !== 1) return;
+      if (phase !== 1 || isRotating) return;
 
       const correctDir = (mode === 'dread' && direction === 'left') || 
                          (mode === 'ascended' && direction === 'right');
       if (!correctDir) return;
 
-      playGrind();
-
-      // Rotate by 120 degrees (1/3 of full rotation)
-      const delta = direction === 'left' ? -120 : 120;
-      outerRotation += delta;
-
-      document.getElementById('outerRing').style.transform = `rotate(${outerRotation}deg)`;
-      document.getElementById('outerRing').style.transformOrigin = '180px 180px';
-
-      // Check for completed rotation
-      const completedRotations = Math.floor(Math.abs(outerRotation) / 360);
+      isRotating = true;
       
-      if (completedRotations > rotationCount) {
-        rotationCount = completedRotations;
+      // Start rock sliding sound
+      rockSlidingSound = playSound('rockSliding', 0.6);
+      
+      // Full rotation animation (360 degrees over ~2 seconds)
+      const totalDuration = 2000; // 2 seconds for full rotation
+      const steps = 36; // 36 steps = 10 degrees per step
+      const stepDuration = totalDuration / steps;
+      const degreesPerStep = direction === 'left' ? -10 : 10;
+      
+      // Rune lighting timing - light one rune at 120°, 240°, 360°
+      const runeTimings = [
+        { degrees: 120, runeIndex: rotationCount * 3 + 1 },
+        { degrees: 240, runeIndex: rotationCount * 3 + 2 },
+        { degrees: 360, runeIndex: rotationCount * 3 + 3 }
+      ];
+      let nextRuneIndex = 0;
+      let currentStep = 0;
+      
+      const rotationInterval = setInterval(() => {
+        currentStep++;
+        outerRotation += degreesPerStep;
         
-        // Fill blood channel
-        for (let i = 1; i <= rotationCount * 3 && i <= 8; i++) {
-          document.getElementById(`bc${i}`).classList.add('filled');
+        document.getElementById('outerRing').style.transform = `rotate(${outerRotation}deg)`;
+        document.getElementById('outerRing').style.transformOrigin = '180px 180px';
+        
+        // Check if we should light up a rune
+        const degreesRotated = currentStep * Math.abs(degreesPerStep);
+        if (nextRuneIndex < runeTimings.length && degreesRotated >= runeTimings[nextRuneIndex].degrees) {
+          const runeNum = runeTimings[nextRuneIndex].runeIndex;
+          if (runeNum <= 9) {
+            // Light up the outer glyph
+            document.getElementById(`og${runeNum}`).classList.add('active');
+            
+            // Fill blood channel
+            if (runeNum <= 8) {
+              document.getElementById(`bc${runeNum}`).classList.add('filled');
+            }
+            
+            // Play bone crack or chime
+            if (mode === 'dread') {
+              playBoneCrack();
+            } else {
+              playChime();
+            }
+            
+            shake();
+          }
+          nextRuneIndex++;
         }
+        
+        // Check if rotation is complete
+        if (currentStep >= steps) {
+          clearInterval(rotationInterval);
+          
+          // Stop rock sliding sound
+          if (rockSlidingSound) {
+            rockSlidingSound.pause();
+            rockSlidingSound.currentTime = 0;
+          }
+          
+          rotationCount++;
+          isRotating = false;
+          
+          // Light up rotation indicator
+          document.getElementById(`rot${rotationCount}`).classList.add('filled');
+          
+          if (mode === 'dread') {
+            addLog(`Rotation ${rotationCount}: The bones remember. The dial drinks deep.`, 'dread');
+          } else {
+            addLog(`Rotation ${rotationCount}: Crystal harmonics resonate through your being.`, 'ascended');
+          }
 
-        // Light up rotation indicator
-        document.getElementById(`rot${rotationCount}`).classList.add('filled');
-
-        // Light up outer glyphs
-        for (let i = 1; i <= rotationCount * 3; i++) {
-          document.getElementById(`og${i}`).classList.add('active');
+          // Check for phase completion
+          if (rotationCount >= 3) {
+            setTimeout(() => {
+              phase = 2;
+              addLog('═══════════════════════════════', 'system');
+              addLog('THE PRIME IS COMPLETE.', mode);
+              addLog('The blood channels overflow. The outer ring locks.', 'warning');
+              updateUI();
+            }, 500);
+          } else {
+            document.getElementById('instructionHint').textContent = 
+              `Rotation ${rotationCount}/3 complete. ${3 - rotationCount} remaining.`;
+          }
         }
-
-        shake();
-
-        if (mode === 'dread') {
-          playBoneCrack();
-          addLog(`Rotation ${rotationCount}: CRACK — The sound of breaking bone fills your skull.`, 'dread');
-        } else {
-          playChime();
-          addLog(`Rotation ${rotationCount}: CHIME — Crystal resonance floods your chest.`, 'ascended');
-        }
-
-        // Check for phase completion
-        if (rotationCount >= 3) {
-          setTimeout(() => {
-            phase = 2;
-            addLog('═══════════════════════════════', 'system');
-            addLog('THE PRIME IS COMPLETE.', mode);
-            addLog('The blood channels overflow. The outer ring locks.', 'warning');
-            updateUI();
-          }, 500);
-        } else {
-          document.getElementById('instructionHint').textContent = 
-            `Rotation ${rotationCount}/3 complete. ${3 - rotationCount} remaining.`;
-        }
-      }
+      }, stepDuration);
     }
 
     // ============== MIDDLE RING SPINNING ==============
